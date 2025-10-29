@@ -14,7 +14,12 @@ int main() {
   printf("Initializing PIO Blinky\n\r");
   blinky_init(pio, state_machine_id, offset, LED_BUILTIN);
 
+  pio_sm_set_clkdiv(pio, state_machine_id, 0xFFFF);
+  // pio_sm_clear_fifos(pio, state_machine_id);
+  // pio_sm_set_enabled(pio, state_machine_id, true);  
+
   while(1) {
+    printf("Running PIO Blinky\n\r");
     //do nothing
   }
 }

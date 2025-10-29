@@ -4,6 +4,7 @@ loop:
     set pins, 1 [31]
     set pins, 0 [31]
     jmp loop
+
 % c-sdk {
 static inline void blinky_init(PIO pio, uint sm, uint offset, uint pin) {
   // 1. Define a config object
@@ -13,5 +14,6 @@ static inline void blinky_init(PIO pio, uint sm, uint offset, uint pin) {
   // 3. Apply the configuration & activate the State Machine
   pio_sm_init(pio, sm, offset, &config);
   pio_sm_set_enabled(pio, sm, true);
+  pio_gpio_init(pio, pin);
 }
 %}
