@@ -4,10 +4,12 @@ project(SuperVNA)
 
 pico_sdk_init()
 add_executable(SuperVNA)
-pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/blinky.pio)
+pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/square.pio)
 
 target_sources(SuperVNA PRIVATE
     main.c
+    pio.h
+    pio.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
