@@ -11,12 +11,12 @@ target_sources(SuperVNA PRIVATE
 )
 
 target_link_libraries(SuperVNA PRIVATE
-    pico2_stdlib
+    pico_stdlib
     hardware_adc
     hardware_gpio
     hardware_pio
     hardware_irq
-    pico2_bootsel_via_double_reset
+    pico_bootsel_via_double_reset
 )
 
 pico_enable_stdio_usb(SuperVNA 1)
