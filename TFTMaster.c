@@ -1,3 +1,6 @@
+//NOTE: MOVED THIS AND HEADER OVER FROM LAB5, NOT SURE IF IT WILL WORK FOR OUR BOARD
+//HERE IS WHAT THE PAGE FOR OUR BOARD DIRECTED ME TO FOR INTERFACING LIBRARY FOR CAPACITIVE TOUCHSCREEN:
+//https://github.com/adafruit/TFTLCD-Library/blob/master/Adafruit_TFTLCD.h
 /* Code rewritten from Adafruit Arduino library for the TFT
  *  by Syed Tahmid Mahbub
  * The TFT itself is Adafruit product 1480
