@@ -5,11 +5,13 @@ project(SuperVNA)
 pico_sdk_init()
 add_executable(SuperVNA)
 pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/square.pio)
+pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/losquare.pio)
 
 target_sources(SuperVNA PRIVATE
     main.c
     pio.h
     pio.c
+    ad9834.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
@@ -19,6 +21,7 @@ target_link_libraries(SuperVNA PRIVATE
     hardware_pio
     hardware_irq
     pico_bootsel_via_double_reset
+    hardware_spi
 )
 
 pico_enable_stdio_usb(SuperVNA 1)

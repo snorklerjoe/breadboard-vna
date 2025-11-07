@@ -6,8 +6,14 @@
 #include <pico/stdlib.h>
 #include <hardware/pio.h>
 #include <square.pio.h>
+#include <losquare.pio.h>
 
+// Initializes / sets freq for a single square-wave output
 void pio_init_sq(PIO pio, uint sm_id, uint out_pin);
 void pio_set_sq_freq(PIO pio, uint sm_id, uint freq);
+
+// Initializes / sets freq for an output of two square waves, 90deg out of phase
+void pio_init_losq(PIO pio, uint sm_id, uint s0, uint s1);
+void pio_set_losq_freq(PIO pio, uint sm_id, uint freq);
 
 #endif
