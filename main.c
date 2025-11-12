@@ -8,31 +8,34 @@
 
 #define LED_BUILTIN 25
 
+static unsigned long int num_entry() {
+  unsigned long int x = 0;
+  char a = '\x00';
+  while((a = getchar()) != '\n') {
+    if(a >= '0' && a <= '9') {
+      x = x * 10;
+      x += a - '0';
+    } else break;
+  }
+  return x;
+}
+
 int main() {
   stdio_init_all();
-  // PIO pio = pio0;
-  // uint state_machine_id = 0;
-  // printf("Initializing PIO Blinky\n\r");
-  // pio_init_sq(pio, state_machine_id, 2);
 
-  // uint freq = 1000;
-  // while(1) {
-  //   sleep_ms(1000);
-  //   printf("YO: I think the freq is %i kHz\r\n", freq);
-  //   freq++;
-  //   pio_set_sq_freq(pio, state_machine_id, freq);
-  // }
-
-  for(int i = 7; i>0; i--) {
   sleep_ms(1000);
-  printf("%i seconds left!\n\r", i);
-  }
 
-    printf("Initializing ad9834 thingy...\n\r");
+  printf("Initializing AD9834...\n\r");
   ad9834_init();
-  ad9834_setfreq(0);
 
+  // printf("Setting freq to 10MHz...\n\r\n\r");
+  // ad9834_setfreq(10000000);
 
-  while(1);
+  while(1) {
+    unsigned long int freq = num_entry();
+    printf("\n\rSetting freq to %ikHz...\n\r", freq);
+    ad9834_setfreq(freq*1000);
+    //sleep_ms(1000);
+  };
 
 }
