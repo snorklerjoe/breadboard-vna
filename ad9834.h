@@ -8,7 +8,6 @@
 #define AD9834_SCK 2    // Serial Clock Pin
 #define AD9834_TXD 3    // Serial Data 
 #define AD9834_FSY 5    // Freq sync / update strobe
-#define AD9834_FSL 4    // Freq select
 
 void ad9834_init();
 
