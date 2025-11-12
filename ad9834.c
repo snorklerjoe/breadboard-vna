@@ -1,5 +1,4 @@
 /* Simple library for communicating with the ad9834 board
-   Loosely based on implementation from Ali Barber: https://github.com/AliBarber/AD9834/blob/master/src/AD9834.cpp
 */
 
 #include "ad9834.h"
@@ -8,12 +7,12 @@
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 
-#include <stdio.h>
-
 // Control Register State
 //   + Enables 2-word freq writes
 //   + Disables freq/phase register switching using FSEL
 const static uint16_t _init_code = 0x2000;
+
+// Square wave reference for the AD9834
 const static long _ad9834_clock_freq = 75000000;
 const static double _freq_factor = (double) (1<<28) / (double) _ad9834_clock_freq;
 
@@ -22,9 +21,8 @@ static bool _freq_reg = 0;  // Keeps track of current freq reg, to alternate for
 /* Sends data to the AD9834 but handles the fsync pin appropriately as per datasheet timing
 */
 static inline void _transfer16(uint16_t data_to_send) {
-    // gpio_put(AD9834_FSY, 0);
+    // gpio_put(AD9834_FSY, 0);   // FSY is treated as CS by SPI h/w
     spi_write16_blocking(spi_default, &data_to_send, 1);
-    printf("0x%X, ", data_to_send);
     // gpio_put(AD9834_FSY, 1);
 }
 
