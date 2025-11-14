@@ -1,9 +1,9 @@
 .program square
 set pindirs, 1
-loop:
+.wrap_target
     set pins, 1
     set pins, 0
-    jmp loop
+.wrap
 
 % c-sdk {
 static inline void square_init(PIO pio, uint sm, uint offset, uint pin) {
