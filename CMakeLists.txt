@@ -13,11 +13,6 @@ target_sources(SuperVNA PRIVATE
     pio.h
     pio.c
     ad9834.c
-    TFTMaster.h
-    TFTMaster.c
-    glcdfont.c
-    ts_lcd.c
-    TouchScreen.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
