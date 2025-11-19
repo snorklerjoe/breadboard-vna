@@ -1,5 +1,4 @@
 /* Simple library for communicating with the ad9834 board
-   Loosely based on implementation from Ali Barber: https://github.com/AliBarber/AD9834/blob/master/src/AD9834.cpp
 */
 
 #ifndef AD9834_H
@@ -10,9 +9,9 @@
 #define AD9834_SCK 2    // Serial Clock Pin
 #define AD9834_TXD 3    // Serial Data 
 #define AD9834_FSY 5    // Freq sync / update strobe
-#define AD9834_REF 21   // Square wave frequency reference
 
-#define AD9834_REF_PIO pio0
+// Must be a pin capable of outputting a clock source directly
+#define AD9834_REF 21   // Square wave frequency reference
 
 // Initializes the AD9834 board and starts the reference clock.
 void ad9834_init();

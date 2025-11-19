@@ -1,23 +1,29 @@
 .program losquare
-set pindirs, 1
-loop:
-    set pins, 0b00
-    set pins, 0b01
-    set pins, 0b11
-    set pins, 0b10
-    jmp loop
+    set pins, 0
+    set pins, 1
+    set pins, 3 
+    set pins, 2
 
 % c-sdk {
-static inline void losquare_init(PIO pio, uint sm, uint offset, uint pin0, uint pin1) {
+static inline void losquare_init(PIO pio, uint sm, uint offset, uint pin0) {
   // 1. Define a config object
   pio_sm_config config = losquare_program_get_default_config(offset);
   // 2. Set and initialize the output pins
-  sm_config_set_set_pins(&config, pin0, 1);
-  sm_config_set_set_pins(&config, pin1, 1);
+
+  sm_config_set_set_pins(&config, pin0, 2);
+
+  pio_gpio_init(pio, pin0);
+  pio_gpio_init(pio, pin0+1);
+  gpio_set_drive_strength(pin0, GPIO_DRIVE_STRENGTH_2MA);
+  gpio_set_drive_strength(pin0+1, GPIO_DRIVE_STRENGTH_2MA);
+  // Set the pin direction to output at the PIO
+
+  pio_sm_set_consecutive_pindirs(pio, sm, pin0, 2, true);
+
+  //sm_config_set_clkdiv(&config, 1);
+
   // 3. Apply the configuration & activate the State Machine
   pio_sm_init(pio, sm, offset, &config);
   pio_sm_set_enabled(pio, sm, true);
-  pio_gpio_init(pio, pin0);
-  pio_gpio_init(pio, pin1);
 }
 %}

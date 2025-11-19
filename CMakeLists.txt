@@ -12,6 +12,7 @@ target_sources(SuperVNA PRIVATE
     pio.h
     pio.c
     ad9834.c
+    receiver.c
 )
 
 target_link_libraries(SuperVNA PRIVATE

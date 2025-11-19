@@ -6,6 +6,7 @@
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
+#include <hardware/clocks.h>
 #include "pio.h"
 
 // Control Register State
@@ -14,7 +15,7 @@
 const static uint16_t _init_code = 0x2000;
 
 // Square wave reference for the AD9834
-const static long _ad9834_clock_freq = 7500000;
+const static long _ad9834_clock_freq = 75000000;
 const static double _freq_factor = (double) (1<<28) / (double) _ad9834_clock_freq;
 
 static bool _freq_reg = 0;  // Keeps track of current freq reg, to alternate for a smooth transition
@@ -28,9 +29,14 @@ static inline void _transfer16(uint16_t data_to_send) {
 }
 
 void ad9834_init() {
-    // Initialize 75MHz Reference clock
-    pio_init_sq(AD9834_REF_PIO, 1, AD9834_REF);
-    pio_set_sq_freq(AD9834_REF_PIO, 1, (float)_ad9834_clock_freq/1000);
+    // Initialize Reference clock
+    // 75MHz  =  150MHz / 2
+    clock_gpio_init(AD9834_REF, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 2.0f);
+    // 48MHz  =  48MHz / 1
+    // clock_gpio_init(AD9834_REF, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_ADC, 1.0f);
+
+    // pio_init_sq(AD9834_REF_PIO, 1, AD9834_REF);
+    // pio_set_sq_freq(AD9834_REF_PIO, 1, (float)_ad9834_clock_freq/1000);
 
     // Set pin modes & functions
     gpio_set_function(AD9834_SCK, GPIO_FUNC_SPI);
