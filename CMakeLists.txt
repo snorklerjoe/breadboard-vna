@@ -6,6 +6,7 @@ pico_sdk_init()
 add_executable(SuperVNA)
 pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/square.pio)
 pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/losquare.pio)
+pico_generate_pio_header(SuperVNA ${CMAKE_CURRENT_LIST_DIR}/SPIPIO.pio)
 
 target_sources(SuperVNA PRIVATE
     main.c

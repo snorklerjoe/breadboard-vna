@@ -22,9 +22,19 @@ static unsigned long int num_entry() {
 }
 
 static void test_stimulus() {
+int main() {
+  stdio_init_all();
+  ts_lcd_init();
+
+  sleep_ms(1000);
+
   printf("Initializing AD9834...\n\r");
   ad9834_init();
 
+  uint16_t touch_x = 100;
+  uint16_t touch_y = 100;
+
+  
   while(1) {
     unsigned long int freq = num_entry();
     printf("\n\rSetting freq to %ikHz...\n\r", freq);

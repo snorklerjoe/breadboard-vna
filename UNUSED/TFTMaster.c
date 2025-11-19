@@ -1,6 +1,8 @@
 //NOTE: MOVED THIS AND HEADER OVER FROM LAB5, NOT SURE IF IT WILL WORK FOR OUR BOARD
 //HERE IS WHAT THE PAGE FOR OUR BOARD DIRECTED ME TO FOR INTERFACING LIBRARY FOR CAPACITIVE TOUCHSCREEN:
 //https://github.com/adafruit/TFTLCD-Library/blob/master/Adafruit_TFTLCD.h
+//Mighe need this:
+//https://forum.arduino.cc/t/how-to-assign-different-pins-in-ft6206-library/951391
 /* Code rewritten from Adafruit Arduino library for the TFT
  *  by Syed Tahmid Mahbub
  * The TFT itself is Adafruit product 1480
