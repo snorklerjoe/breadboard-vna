@@ -14,6 +14,7 @@ static unsigned long int num_entry() {
   char a = '\x00';
   while((a = getchar()) != '\n') {
     if(a >= '0' && a <= '9') {
+      putchar(a);
       x = x * 10;
       x += a - '0';
     } else break;
@@ -22,12 +23,6 @@ static unsigned long int num_entry() {
 }
 
 static void test_stimulus() {
-int main() {
-  stdio_init_all();
-  ts_lcd_init();
-
-  sleep_ms(1000);
-
   printf("Initializing AD9834...\n\r");
   ad9834_init();
 
@@ -47,19 +42,25 @@ static void test_rx() {
   printf("Initializing Receiver and AD9834...\n\r");
   ad9834_init();
   rx_init();
-  rx_set_incident();
+  // rx_set_incident();
+  rx_set_reflected();
 
-  printf("Please type a frequency.");
 
   while(1) {
+    printf("SRC FREQ:  ");
     unsigned long int freq = num_entry();
-    printf("\n\rSetting freq to %ikHz and LO to %ikHz...\n\r", freq, freq - 1);
+    printf("\n");
+
+    printf("LO FREQ:  ");
+    unsigned long int lofreq = num_entry();
+    printf("\n");
+
+    printf("\n\rSetting AD9834 to %ikHz and LO to %ikHz...\n\r", freq, (uint16_t)rx_setfreq(lofreq));
     ad9834_setfreq(freq*1000);
-    rx_setfreq(freq-1);
   }
 }
 
-int main() {
+void main() {
   stdio_init_all();
   sleep_ms(1000);
   // test_stimulus();

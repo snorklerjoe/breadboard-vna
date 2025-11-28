@@ -14,6 +14,6 @@ void pio_set_sq_freq(PIO pio, uint sm_id, float freq);
 
 // Initializes / sets freq for an output of two square waves, 90deg out of phase
 void pio_init_losq(PIO pio, uint sm_id, uint s0, uint s1);
-void pio_set_losq_freq(PIO pio, uint sm_id, float freq);
+float pio_set_losq_freq(PIO pio, uint sm_id, float freq);
 
 #endif

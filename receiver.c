@@ -9,6 +9,9 @@ void rx_init() {
     // Set init GPIO state:
     // gpio_set_dir(LO_S0, true);
     // gpio_set_dir(LO_S1, true);
+    gpio_init(RX_INCT_EN);
+    gpio_init(RX_REFL_EN);
+
     gpio_set_dir(RX_INCT_EN, true);
     gpio_set_dir(RX_REFL_EN, true);
 
@@ -24,8 +27,8 @@ void rx_init() {
 // The actual LO frequency will be four times the value specified to this function,
 // since the Tayloe detector requires it, but the specified frequency will be the
 // offset between the RF and what is sampled by the ADC.
-void rx_setfreq(unsigned long int freq) {
-    pio_set_losq_freq(TAYLOE_PIO, 0, freq);
+float rx_setfreq(unsigned long int freq) {
+    return (float) pio_set_losq_freq(TAYLOE_PIO, 0, freq);
 }
 
 // Configure the receiver to receive the incident signal

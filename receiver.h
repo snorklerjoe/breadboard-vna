@@ -23,7 +23,8 @@ void rx_init();
 // The actual LO frequency will be four times the value specified to this function,
 // since the Tayloe detector requires it, but the specified frequency will be the
 // offset between the RF and what is sampled by the ADC.
-void rx_setfreq(unsigned long int freq);
+// Returns actual frequency
+float rx_setfreq(unsigned long int freq);
 
 // Configure the receiver to receive the incident signal
 void rx_set_incident();
