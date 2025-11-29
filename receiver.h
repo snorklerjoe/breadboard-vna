@@ -5,6 +5,8 @@
 #define RECEIVER_H
 
 #include <hardware/pio.h>
+#include <math.h>
+#include "adc_sampling.h"
 
 #define RX_INCT_EN 15  // Enable receiving the incident signal
 #define RX_REFL_EN 14  // Enable receiving the reflected signal
@@ -31,5 +33,7 @@ void rx_set_incident();
 
 // Configure the receiver to receive the reflected signal
 void rx_set_reflected();
+
+// 
 
 #endif

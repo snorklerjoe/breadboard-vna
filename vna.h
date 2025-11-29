@@ -1,0 +1,63 @@
+// Meta-module to represent all VNA hardware and do maths
+
+#ifndef VNA_H
+#define VNA_H
+
+#include "receiver.h"
+#include "adc_sampling.h"
+
+
+// Config for taking a reading
+#define RDG_AVERAGES 10      // Number of readings to average together
+#define RDG_STEADYSTATE_DELAY_MS 5  // Number of ms to wait before assuming steady state and taking measurement
+#define RDG_FREQCHANGE_DELAY_MS 500  // Number of ms to wait before assuming steady state and taking measurement
+#define RDG_ADC_FREQ 50  // Desired frequency to have at the ADC (kHz)
+
+// Hardware Parameters
+#define BRIDGE_COUPLINGLOSS 2.0   // -6dB coupling of signal through the bridge
+#define BRIDGE_INSLOSS      2.0   // 6dB loss through bridge
+#define FWD_ATTEN           0.115044  // Gain on fwd reference attenuator to not clip
+#define BRIDGE_HWMULT BRIDGE_COUPLINGLOSS * BRIDGE_INSLOSS * FWD_ATTEN
+
+// Math helpers
+// Complex Number struct
+typedef struct {
+    double a, b;  // Real, Imaginary (rectangular form)
+} double_cplx_t;
+
+// Error terms for one port
+typedef struct {
+    double_cplx_t e0;   // e00
+    double_cplx_t e1;   // e11
+    double_cplx_t De;   // e00*e11 - e10*e01
+} error_terms_t;
+
+#define cplx_div(x, y) (double_cplx_t) {(x.a*y.a + x.b*y.b) / (y.a*y.a + y.b*y.b), (y.a*x.b - x.a*y.b) / (y.a*y.a + y.b*y.b)}
+#define cplx_mult(x, y) (double_cplx_t) {(x.a*y.a)-(x.b*y.b), (x.a*y.b + x.b*y.a)}
+#define cplx_add(x, y) (double_cplx_t) {(x.a+y.a), (x.b+y.b)}
+#define cplx_sub(x, y) (double_cplx_t) {(x.a-y.a), (x.b-y.b)}
+#define cplx_scale(x, s) (double_cplx_t) {s*x.a, s*x.b}
+
+#define cplx_mag(num) (double) sqrt(num.a*num.a + num.b*num.b)
+#define cplx_ang(num) (double) atan2(num.b, num.a)
+
+// Initializes all VNA hardware
+void vna_init();
+
+// Sets LO as close as possible to a given frequency in kHz
+// and sets the source appropriately to result in a proper ADC_FREQ.
+// Returns the actual source frequency.
+double vna_set_freq(uint16_t freq);
+
+// Takes a measurement and returns the uncal'd gamma value
+// Does not touch current frequency settings
+double_cplx_t vna_meas_point_gamma_raw(int num_avgs);
+
+// Returns set of error terms given measurements of short, open, load.
+// These error terms are valid only at this same freq point.
+error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_cplx_t m_load);
+
+// Returns calibrated Gamma from a raw Gamma and error terms
+double_cplx_t vna_apply_cal_point(double_cplx_t gamma, error_terms_t err_terms);
+
+#endif

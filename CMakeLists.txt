@@ -14,6 +14,8 @@ target_sources(SuperVNA PRIVATE
     pio.c
     ad9834.c
     receiver.c
+    adc_sampling.c
+    vna.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
@@ -22,6 +24,7 @@ target_link_libraries(SuperVNA PRIVATE
     hardware_gpio
     hardware_pio
     hardware_irq
+    hardware_dma
     pico_bootsel_via_double_reset
     hardware_spi
 )
