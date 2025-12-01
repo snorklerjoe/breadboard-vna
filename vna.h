@@ -41,6 +41,10 @@ typedef struct {
 #define cplx_mag(num) (double) sqrt(num.a*num.a + num.b*num.b)
 #define cplx_ang(num) (double) atan2(num.b, num.a)
 
+#define gamma_to_s11dB(gamma) 20*log10(cplx_mag(gamma))
+#define gamma_to_VSWR(gamma) ((double)cplx_mag(gamma) + 1.0)/(1.0 - (double)cplx_mag(gamma))
+#define gamma_to_Z(gamma) 50.0 * ((double)cplx_mag(gamma) + 1.0)/(1.0 - (double)cplx_mag(gamma))
+
 // Initializes all VNA hardware
 void vna_init();
 

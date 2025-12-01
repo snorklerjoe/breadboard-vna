@@ -65,8 +65,8 @@ static void test_rx() {
 }
 
 static void test_rx_adc() {
-  const uint cal_avgs = 15;
-  const uint meas_avgs = 5;
+  const uint cal_avgs = 5;
+  const uint meas_avgs = 2;
 
   getchar();
   getchar();
@@ -100,8 +100,8 @@ static void test_rx_adc() {
     double_cplx_t gamma_raw = vna_meas_point_gamma_raw(meas_avgs);
     double_cplx_t gamma_cald = vna_apply_cal_point(gamma_raw, error_terms);
     // printf("Raw Γ = %f + j%f\t = %f ∠ %f\tCal'd: Γ ~= %f ∠ %fdeg\t\r", gamma_raw.a, gamma_raw.b, cplx_mag(gamma_raw), cplx_ang(gamma_raw),  cplx_mag(gamma_cald), 180*cplx_ang(gamma_cald)/MATH_PI);
-    printf("Cal'd: Γ = %f ∠ %fdeg\t             \n\r", cplx_mag(gamma_cald), 180*cplx_ang(gamma_cald)/MATH_PI);
-    printf("|S11|dB = %f", 10*log10(cplx_mag(gamma_cald)));
+    printf("Cal'd: Γ = %f ∠ %fdeg            \n\r", cplx_mag(gamma_cald), 180*cplx_ang(gamma_cald)/MATH_PI);
+    printf("|S11|dB = %f,  \tVSWR = %f,  \tZ = %f+j%f       ", gamma_to_s11dB(gamma_cald), gamma_to_VSWR(gamma_cald), gamma_to_Z(gamma_cald));
     printf("\033[1A\r\r");
   }
 }
