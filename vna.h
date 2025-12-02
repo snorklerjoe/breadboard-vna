@@ -10,7 +10,7 @@
 // Config for taking a reading
 #define RDG_STEADYSTATE_DELAY_MS 5  // Number of ms to wait before assuming steady state and taking measurement
 #define RDG_FREQCHANGE_DELAY_MS 15  // Number of ms to wait before assuming steady state and taking measurement
-#define RDG_ADC_FREQ 30  // Desired frequency to have at the ADC (kHz)
+#define RDG_ADC_FREQ 10  // Desired frequency to have at the ADC (kHz)
 
 // Math helpers
 // Complex Number struct
@@ -50,6 +50,13 @@ typedef struct {
 
 // Initializes all VNA hardware
 void vna_init();
+
+// Checks the level of the reference signal, such that 1.0 is clipping the ADC
+double vna_ref_levelcheck(double freq);
+
+// Checks the levl of the refl signal, such that 1.0 is clipping the ADC
+double vna_refl_levelcheck(double freq);
+
 
 /*************** SINGLE-POINT VNA MEASUREMENTS ***************/
 // Sets LO as close as possible to a given frequency in kHz

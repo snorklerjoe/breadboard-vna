@@ -26,6 +26,27 @@ double vna_set_freq(uint16_t freq) {
     return srcfreq_real;
 }
 
+// Checks the level of the reference signal, such that 1.0 is clipping the ADC
+double vna_ref_levelcheck(double freq) {
+    rx_set_incident();
+    vna_set_freq(freq);
+    sleep_ms(RDG_FREQCHANGE_DELAY_MS);
+    return imax(
+        rx_adc_get_pp_unfiltered_blocking(ADC_I),
+        rx_adc_get_pp_unfiltered_blocking(ADC_Q)
+    );
+}
+
+// Checks the levl of the refl signal, such that 1.0 is clipping the ADC
+double vna_refl_levelcheck(double freq) {
+    rx_set_incident();
+    vna_set_freq(freq);
+    sleep_ms(RDG_FREQCHANGE_DELAY_MS);
+    return imax(
+        rx_adc_get_pp_unfiltered_blocking(ADC_I),
+        rx_adc_get_pp_unfiltered_blocking(ADC_Q)
+    );
+}
 
 static double_cplx_t vna_meas_point_gamma_raw_once() {
     // Measure incident power (vector)

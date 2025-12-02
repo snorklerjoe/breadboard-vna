@@ -60,7 +60,7 @@ void rx_adc_init() {
     printf("Initialized ADC.\n\r");
 }
 
-float rx_adc_get_amplitude_blocking(int adc_pin, float freq) {
+float rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
     // Set up ADC FIFO
     adc_select_input(adc_pin - 26);
     adc_fifo_setup(true, true, 1, false, true);
@@ -132,3 +132,48 @@ float rx_adc_get_amplitude_blocking(int adc_pin, float freq) {
     return rms;  // Return rms
 }
 
+
+float rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
+    // Set up ADC FIFO
+    adc_select_input(adc_pin - 26);
+    adc_fifo_setup(true, true, 1, false, true);
+    adc_set_clkdiv(0);
+
+    // Set up ADC DMA channel
+    // printf("Setting up DMA channel...\n\r");
+    uint dma_ch = dma_claim_unused_channel(true);
+    dma_channel_config cfg = dma_channel_get_default_config(dma_ch);
+
+    // Based on https://github.com/raspberrypi/pico-examples/blob/master/adc/dma_capture/dma_capture.c
+    // Reading from constant address, writing to incrementing byte addresses
+    channel_config_set_transfer_data_size(&cfg, DMA_SIZE_16);
+    channel_config_set_read_increment(&cfg, false);
+    channel_config_set_write_increment(&cfg, true);
+    // Pace transfers based on availability of ADC samples
+    channel_config_set_dreq(&cfg, DREQ_ADC);
+    dma_channel_configure(dma_ch, &cfg,
+        buf,    // dst
+        &adc_hw->fifo,  // src
+        NUM_SAMPLES,  // transfer count
+        true            // start immediately
+    );
+
+    // Start the capture
+    // printf("Starting capture...\n\r");
+    adc_run(true);
+    dma_channel_wait_for_finish_blocking(dma_ch);
+    adc_run(false);
+    adc_fifo_drain();
+    dma_channel_cleanup(dma_ch);
+    dma_channel_unclaim(dma_ch);
+
+    uint16_t max = buf[0];
+    uint16_t min = buf[0];
+
+    for(int i = FIR_N; i < NUM_SAMPLES - FIR_N; i++) {
+        if(buf[i] > max) max = buf[i];
+        if(buf[i] < min) min = buf[i];
+    }
+
+    return (double)(max-min) / (double) (1<<12);
+}

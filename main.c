@@ -120,8 +120,8 @@ static void test_rx_adc() {
 }
 
 static void test_vnasweeps() {
-  const uint cal_avgs = 10;
-  const uint meas_avgs = 5;
+  const uint cal_avgs = 5;
+  const uint meas_avgs = 3;
 
   getchar();
   getchar();
@@ -134,10 +134,16 @@ static void test_vnasweeps() {
     // Start (kHz)
     (double) 100,
     // End (kHz)
-    (double) 30000,
+    (double) 12000,
     // Num Points
     (uint) 20
   };
+
+  // Check levels:
+  printf("Checking ADC levels...\n\r");
+  printf("Levels at ~1MHz: %f%% ref,  \t%f%% refl  \n\r", 100*vna_ref_levelcheck(1000), 100*vna_refl_levelcheck(1000));
+  printf("Levels at ~6MHz: %f%% ref,  \t%f%% refl  \n\r", 100*vna_ref_levelcheck(6000), 100*vna_refl_levelcheck(6000));
+  printf("Levels at ~12MHz: %f%% ref,  \t%f%% refl  \n\r", 100*vna_ref_levelcheck(12000), 100*vna_refl_levelcheck(12000));
   
   vna_meas_t measurement = vna_meas_init(&meas_setup);
 
@@ -159,6 +165,10 @@ static void test_vnasweeps() {
   printf("Calculating errr terms...\r");
   vna_run_cal(measurement);
   printf("Calibrated.          \n\r\n\r");
+
+  for(int i = 0; i < measurement.setup->num_points; i++) {
+    printf("Levels at %f MHz: %f%% ref,  \t%f%% refl  \n\r", measurement.frequencies[i]/1000, 100*vna_ref_levelcheck(measurement.frequencies[i]), 100*vna_refl_levelcheck(measurement.frequencies[i]));
+  }
 
   while(1) {
     // Take measurement
