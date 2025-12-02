@@ -1,4 +1,5 @@
-// Code for dealing with frequency-swept measurements
+// Code for dealing with frequency-swept measurements,
+// essentially applying the functions of vna.h to swept frequency
 
 #ifndef VNA_SWEEPS_H
 #define VNA_SWEEPS_H
@@ -32,6 +33,8 @@ typedef struct {
 } vna_meas_t;
 
 // Creates a new, initialized vna_meas_t instance based on a given setup
+// Dynamic allocation is used, so vna_meas_deinit must follow if multiple are
+// initialized in order to avoid a memory leak.
 vna_meas_t vna_meas_init(vna_meas_setup_t *setup);
 // Frees memory from a previously initialized instance
 void vna_meas_deinit(vna_meas_t meas);

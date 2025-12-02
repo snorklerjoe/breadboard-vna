@@ -19,7 +19,6 @@ static inline double sinc(double x) {
 
 // Puts an h[n] for a given center and width of bandpass filter into fir_h
 static void gen_fir_h(double center, double width) {
-    // printf("Making filter for center %f and width %f 1/samples\n\r", center, width);
     // Frequencies of step function offsets
     double f0 = center - width / 2.0;
     double f1 = center + width / 2.0;
@@ -27,7 +26,6 @@ static void gen_fir_h(double center, double width) {
     // Generate impulse response with which to convolve x[n]
     for(int i = 0; i < FIR_N; i++) {
         fir_n[i] = i - (FIR_N/2);
-        // fir_h[i] = 2.0*f0*sinc(2.0*f0*fir_n[i]) - 2.0*f1*sinc(2.0*f1*fir_n[i]);
         fir_h[i] = 2.0*MATH_PI*width*sinc(2.0*MATH_PI*width*fir_n[i]) * cos(2.0*MATH_PI*center*fir_n[i]);
     }
 }
@@ -44,20 +42,17 @@ static void convolve() {
     // Generate each filtered sample
     for(int n = 0; n < outlen; n++) {
         int maxk = imin(FIR_N, n);
-        // printf("n = %i; k up to %i...\n\r", n, maxk);
         for(int k = 0; k < maxk; k++) {
-            // printf("\tk = %i\n\r", k);
             y_buf[n] = y_buf[n] + ((double)buf[n - k]) * fir_h[k];
         }
     }
-    // printf("\n\r");
 }
 
 void rx_adc_init() {
     adc_gpio_init(ADC_I);
     adc_gpio_init(ADC_Q);
     adc_init();
-    printf("Initialized ADC.\n\r");
+    // printf("Initialized ADC.\n\r");
 }
 
 float rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
@@ -86,49 +81,26 @@ float rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
     );
 
     // Start the capture
-    // printf("Starting capture...\n\r");
     adc_run(true);
     dma_channel_wait_for_finish_blocking(dma_ch);
     adc_run(false);
     adc_fifo_drain();
     dma_channel_cleanup(dma_ch);
     dma_channel_unclaim(dma_ch);
-    // printf("Finished capture!\n\r");
-
-    // for(int i=0; i< NUM_SAMPLES; i++) {
-    //     printf("buf[%i]\t= %i\n\r", i, buf[i]);
-    // }
-    // printf("\n\r");
-    // sleep_ms(10000);
 
     // Generate the FIR response with which to convolve the samples
     gen_fir_h(((double) freq) / 500, ((double) FIR_WIDTH) / 500);
-    // printf("Generated FIR response:\n\r");
-
-    // for(int i=0; i< FIR_N; i++) {
-    //     printf("%i, %i\r\n", i, fir_h[i]);
-    // }
-    // printf("\n\r");
-    // sleep_ms(2000);
 
     // Convolve the samples with the FIR response to get filtered data
     convolve();
-    // printf("Completed convolution\n\r");
 
-    // Find min and max of signal, discarding first and last FIR_N*2 many samples
-    // double min = y_buf[0];
-    // double max = y_buf[0];
+    // Find scaled RMS voltage, discarding first and last FIR_N*2 many samples
     double sumsq = 0.0;
     for(int i = FIR_N; i < NUM_SAMPLES - FIR_N; i++) {
-        // printf("y_buf[%i]\t= %f\n\r", i, y_buf[i]);
-        // if(y_buf[i] > max) max = y_buf[i];
-        // if(y_buf[i] < min) min = y_buf[i];
         sumsq = sumsq + y_buf[i] * y_buf[i];
     }
 
-    // return max - min;
     double rms = sqrt(sumsq / (NUM_SAMPLES - FIR_N*2));
-    // printf("Peak-to-Peak is %f\n\r", max - min);
     return rms;  // Return rms
 }
 
@@ -140,7 +112,6 @@ float rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
     adc_set_clkdiv(0);
 
     // Set up ADC DMA channel
-    // printf("Setting up DMA channel...\n\r");
     uint dma_ch = dma_claim_unused_channel(true);
     dma_channel_config cfg = dma_channel_get_default_config(dma_ch);
 
@@ -152,14 +123,13 @@ float rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
     // Pace transfers based on availability of ADC samples
     channel_config_set_dreq(&cfg, DREQ_ADC);
     dma_channel_configure(dma_ch, &cfg,
-        buf,    // dst
+        buf,            // dst
         &adc_hw->fifo,  // src
-        NUM_SAMPLES,  // transfer count
+        NUM_SAMPLES,    // transfer count
         true            // start immediately
     );
 
     // Start the capture
-    // printf("Starting capture...\n\r");
     adc_run(true);
     dma_channel_wait_for_finish_blocking(dma_ch);
     adc_run(false);
@@ -167,6 +137,7 @@ float rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
     dma_channel_cleanup(dma_ch);
     dma_channel_unclaim(dma_ch);
 
+    // Figure out max and min of signal to subtract
     uint16_t max = buf[0];
     uint16_t min = buf[0];
 

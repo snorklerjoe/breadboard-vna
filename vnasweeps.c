@@ -1,6 +1,8 @@
 #include "vnasweeps.h"
 
 // Creates a new, initialized vna_meas_t instance based on a given setup
+// Dynamic allocation is used, so vna_meas_deinit must follow if multiple are
+// initialized in order to avoid a memory leak.
 vna_meas_t vna_meas_init(vna_meas_setup_t *setup) {
     int numpts = setup->num_points;
     vna_meas_t meas = {
@@ -29,6 +31,7 @@ void vna_meas_deinit(vna_meas_t meas) {
     free(meas.gammas_uncald);
     free(meas.gammas_cald);
 
+    // Good practice to set things to null after freeing
     meas.setup = NULL;
     meas.frequencies = NULL;
     meas.cal_short = NULL;
@@ -40,10 +43,11 @@ void vna_meas_deinit(vna_meas_t meas) {
 }
 
 // Stores an array of frequency points and an array of uncal'd Gamma values based on a measurement setup
-void vna_sweep_freq(vna_meas_t meas, double_cplx_t* gammas, uint8_t numavgs) {
+void vna_sweep_freq(vna_meas_t meas, double_cplx_t* gammas, uint8_t numavgs) {  // Assumes meas is already initialized!
     vna_meas_setup_t meas_setup = *meas.setup;
     double approx_step = (meas_setup.end_freq - meas_setup.start_freq) / (double) meas_setup.num_points;
     uint i = 0;
+    // Store frequency and gamma for each point
     for (double freq = meas_setup.start_freq; freq < meas_setup.end_freq; freq = freq + approx_step) {  // For each freq point
         meas.frequencies[i] = vna_set_freq(freq);
         gammas[i] = vna_meas_point_gamma_raw(numavgs);

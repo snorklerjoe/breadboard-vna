@@ -28,6 +28,7 @@ static inline void _transfer16(uint16_t data_to_send) {
     // gpio_put(AD9834_FSY, 1);
 }
 
+// Initialize the chip
 void ad9834_init() {
     // Initialize Reference clock
     // 75MHz  =  150MHz / 2
@@ -61,6 +62,7 @@ void ad9834_init() {
     _transfer16(0xE000);  // Default value... we don't care about a phase offset, yet
 }
 
+// Change the frequency as per the method in the datasheet
 void ad9834_setfreq(unsigned long int freq) {
 
     // Calculate values for the frequecy registers

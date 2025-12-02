@@ -7,8 +7,6 @@
 // Initializes the receiver and puts everything into a reset state
 void rx_init() {
     // Set init GPIO state:
-    // gpio_set_dir(LO_S0, true);
-    // gpio_set_dir(LO_S1, true);
     gpio_init(RX_INCT_EN);
     gpio_init(RX_REFL_EN);
 

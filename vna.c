@@ -10,19 +10,27 @@
 
 // Initializes all VNA hardware
 void vna_init() {
-  ad9834_init();
-  rx_init();
-  rx_adc_init();
+  ad9834_init();    // Initialize the source
+  rx_init();        // Initialize the receiver
+  rx_adc_init();    // Initialize the ADC
 }
 
 // Sets LO as close as possible to a given frequency in kHz + ADC_FREQ
 // and sets the source appropriately to result in a proper ADC_FREQ.
 // Returns the actual source frequency.
 double vna_set_freq(uint16_t freq) {
+    // Set the receiver frequency
+    // This is what limits frequency resolution, due to integer division
     uint16_t lofreq_real = (uint16_t)rx_setfreq(freq + RDG_ADC_FREQ);
+
+    // Set the source frequency so as to result in a proper adc frequency
     uint16_t srcfreq_real = lofreq_real + RDG_ADC_FREQ;
     ad9834_setfreq(srcfreq_real*1000);
+
+    // Sleep to wait for steady-state
     sleep_ms(RDG_FREQCHANGE_DELAY_MS);
+
+    // Return the actual frequency that the source is at
     return srcfreq_real;
 }
 
@@ -62,8 +70,6 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     double refl_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
     double refl_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
     double_cplx_t reflected_rx = {refl_I, refl_Q};
-
-    // printf("\t|reference| = %f\t|reflected| = %f\t\n\r", cplx_mag(reference_rx), cplx_mag(reflected_rx));
 
     // Calculate Gamma
     double_cplx_t gamma_raw = cplx_div(
@@ -111,7 +117,7 @@ double_cplx_t vna_meas_point_gamma_raw(int num_avgs) {
 // These error terms are valid only at this same freq point.
 // These equations find the error terms based on algebraic solutions via Cramer's rule to the
 // equations given here: http://emlab.uiuc.edu/ece451/appnotes/Rytting_NAModels.pdf
-// They are solved here: https://k6jca.blogspot.com/search/label/VNA%3A%2012-term%20Error%20Model
+// They are solved here, which is what is used below: https://k6jca.blogspot.com/search/label/VNA%3A%2012-term%20Error%20Model
 error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_cplx_t m_load) {
     // Common denominator
     double_cplx_t denom = cplx_add(
@@ -177,8 +183,7 @@ error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_
                 cplx_mult(Gamma_Open, m_load),
                 cplx_mult(Gamma_Load, m_open)
             )
-        ),
-        -1.0
+        ), -1.0
     );
 
     double_cplx_t e11 = cplx_div(num_e11, denom);
@@ -204,8 +209,7 @@ error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_
                 cplx_mult(Gamma_Load, cplx_mult(m_short, m_load)),
                 cplx_mult(Gamma_Load, cplx_mult(m_open, m_load))
             )
-        ),
-        -1.0
+        ), -1.0
     );
 
     double_cplx_t d_e = cplx_div(num_de, denom);
@@ -218,9 +222,6 @@ error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_
 double_cplx_t vna_apply_cal_point(double_cplx_t gamma, error_terms_t err_terms) {
     double_cplx_t num = cplx_sub(gamma, err_terms.e0);
     double_cplx_t denom = cplx_sub(cplx_mult(gamma, err_terms.e1), err_terms.De);
-    // double_cplx_t denom = cplx_sub(err_terms.e1, cplx_mult(gamma, err_terms.De));
-    // double_cplx_t num = cplx_add(cplx_sub(gamma, err_terms.e0), err_terms.De);
-    // double_cplx_t denom = err_terms.e1;
     return cplx_div(num, denom);
 }
 

@@ -1,4 +1,4 @@
-// Meta-module to represent all VNA hardware and do maths
+// Meta-module to represent all VNA hardware and do calibration maths
 
 #ifndef VNA_H
 #define VNA_H
