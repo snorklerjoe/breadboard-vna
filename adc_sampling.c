@@ -55,7 +55,7 @@ void rx_adc_init() {
     // printf("Initialized ADC.\n\r");
 }
 
-float rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
+double rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
     // Set up ADC FIFO
     adc_select_input(adc_pin - 26);
     adc_fifo_setup(true, true, 1, false, true);
@@ -105,7 +105,7 @@ float rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
 }
 
 
-float rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
+double rx_adc_get_pp_unfiltered_blocking(int adc_pin) {
     // Set up ADC FIFO
     adc_select_input(adc_pin - 26);
     adc_fifo_setup(true, true, 1, false, true);
