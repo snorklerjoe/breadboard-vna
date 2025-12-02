@@ -54,12 +54,36 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
 }
 
 double_cplx_t vna_meas_point_gamma_raw(int num_avgs) {
-    // return vna_meas_point_gamma_raw_once();
+    // Take measurements
+    double_cplx_t points[num_avgs];
+    for(int i = 0; i < num_avgs; i++) {
+        points[i] = vna_meas_point_gamma_raw_once();
+    }
+
+    // Find mean
     double_cplx_t sum = {0.0, 0.0};
     for(int i = 0; i < num_avgs; i++) {
-        sum = cplx_add(sum, vna_meas_point_gamma_raw_once());
+        sum = cplx_add(sum, points[i]);
     }
-    return cplx_scale(sum, 1.0/num_avgs);
+    double_cplx_t mean = cplx_scale(sum, 1.0/num_avgs);
+
+    if(num_avgs <= 2) return mean;
+
+    // If enough points, drop one outlier
+    int outlier_index = 0;
+    double max_diff = 0;
+    for(int i = 0; i < num_avgs; i++) {
+        double diff = cplx_mag(cplx_sub(points[i], mean));
+        if(diff > max_diff) {
+            outlier_index = i;
+            max_diff = diff;
+        }
+    }
+
+    // Compute mean with outlier thrown out
+    sum = cplx_sub(sum, points[outlier_index]);
+    mean = cplx_scale(sum, 1.0/(num_avgs - 1.0));
+    return mean;
 }
 
 // Returns set of error terms given measurements of short, open, load.

@@ -9,6 +9,7 @@
 #include <hardware/clocks.h>
 #include <math.h>
 #include "vna.h"
+#include "vnasweeps.h"
 
 #define LED_BUILTIN 25
 
@@ -65,7 +66,7 @@ static void test_rx() {
 }
 
 static void test_rx_adc() {
-  const uint cal_avgs = 5;
+  const uint cal_avgs = 15;
   const uint meas_avgs = 2;
 
   getchar();
@@ -118,13 +119,74 @@ static void test_rx_adc() {
   }
 }
 
+static void test_vnasweeps() {
+  const uint cal_avgs = 10;
+  const uint meas_avgs = 5;
+
+  getchar();
+  getchar();
+  getchar();
+  getchar();
+  printf("Initializing Receiver and AD9834...\n\r");
+  
+  vna_init();
+  vna_meas_setup_t meas_setup = {
+    // Start (kHz)
+    (double) 100,
+    // End (kHz)
+    (double) 30000,
+    // Num Points
+    (uint) 20
+  };
+  
+  vna_meas_t measurement = vna_meas_init(&meas_setup);
+
+  printf("Set short and press enter.\n\r");
+  getchar();
+
+  vna_sweep_freq(measurement, measurement.cal_short, cal_avgs);
+
+  printf("Set open and press enter.\n\r");
+  getchar();
+
+  vna_sweep_freq(measurement, measurement.cal_open, cal_avgs);
+
+  printf("Set load and press enter.\n\r");
+  getchar();
+
+  vna_sweep_freq(measurement, measurement.cal_load, cal_avgs);
+
+  printf("Calculating errr terms...\r");
+  vna_run_cal(measurement);
+  printf("Calibrated.          \n\r\n\r");
+
+  while(1) {
+    // Take measurement
+    vna_sweep_freq(measurement, measurement.gammas_uncald, meas_avgs);
+
+    // Apply correction
+    vna_run_correction(measurement);
+
+    // Print results
+    for(int i = 0; i < measurement.setup->num_points; i++) {  // Print out table
+      double_cplx_t pt = measurement.gammas_cald[i];
+      printf("@%fkHz, \tΓ = %f ∠ %fdeg  \t|S11|dB = %f  \tVSWR = %f  \tZ = %f+j%f   \n\r", measurement.frequencies[i], cplx_mag(pt), cplx_ang_deg(pt), gamma_to_s11dB(pt), gamma_to_VSWR(pt), gamma_to_Z(pt).a, gamma_to_Z(pt).b);
+    }
+    for(int i = 0; i < measurement.setup->num_points; i++) {  // Go back
+      printf("\033[1A\r\r");
+    }
+  }
+}
+
 void main() {
   stdio_init_all();
   sleep_ms(1000);
   // test_stimulus();
   // test_rx();
   // test_piofreq();
-  test_rx_adc();
+  // test_rx_adc();
+
+  test_vnasweeps();
 
   // pio_init_losq(pio0, 1, 0, 1);
   // pio_set_losq_freq(pio0, 1, 1000);

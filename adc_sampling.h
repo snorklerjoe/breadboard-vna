@@ -5,9 +5,9 @@
 #ifndef ADC_SAMPLING_H
 #define ADC_SAMPLING_H
 
-#define NUM_SAMPLES 2048
-#define FIR_N 64
-#define FIR_WIDTH 0.25  // kHz
+#define NUM_SAMPLES 1024
+#define FIR_N 32
+#define FIR_WIDTH 1  // kHz
 
 #define ADC_I 26 
 #define ADC_Q 27

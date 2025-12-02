@@ -16,6 +16,7 @@ target_sources(SuperVNA PRIVATE
     receiver.c
     adc_sampling.c
     vna.c
+    vnasweeps.c
 )
 
 target_link_libraries(SuperVNA PRIVATE

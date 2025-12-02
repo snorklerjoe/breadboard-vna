@@ -8,10 +8,9 @@
 
 
 // Config for taking a reading
-#define RDG_AVERAGES 10      // Number of readings to average together
-#define RDG_STEADYSTATE_DELAY_MS 1  // Number of ms to wait before assuming steady state and taking measurement
-#define RDG_FREQCHANGE_DELAY_MS 50  // Number of ms to wait before assuming steady state and taking measurement
-#define RDG_ADC_FREQ 50  // Desired frequency to have at the ADC (kHz)
+#define RDG_STEADYSTATE_DELAY_MS 5  // Number of ms to wait before assuming steady state and taking measurement
+#define RDG_FREQCHANGE_DELAY_MS 15  // Number of ms to wait before assuming steady state and taking measurement
+#define RDG_ADC_FREQ 30  // Desired frequency to have at the ADC (kHz)
 
 // Math helpers
 // Complex Number struct
@@ -48,9 +47,11 @@ typedef struct {
 #define cplx_unity (double_cplx_t){1.0, 0.0}  // Just 1
 #define gamma_to_Z(gamma) cplx_scale(cplx_div(cplx_add(gamma, cplx_unity), cplx_sub(cplx_unity, gamma)), 50.0)
 
+
 // Initializes all VNA hardware
 void vna_init();
 
+/*************** SINGLE-POINT VNA MEASUREMENTS ***************/
 // Sets LO as close as possible to a given frequency in kHz
 // and sets the source appropriately to result in a proper ADC_FREQ.
 // Returns the actual source frequency.
