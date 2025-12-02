@@ -96,6 +96,18 @@ static void test_rx_adc() {
   error_terms_t error_terms = vna_cal_point(short_meas, open_meas, load_meas);
   printf("Calibrated.          \n\r\n\r");
 
+
+    error_terms_t err = vna_cal_point(short_meas, open_meas, load_meas);
+
+  double_cplx_t cal_short = vna_apply_cal_point(short_meas, err);
+  double_cplx_t cal_open  = vna_apply_cal_point(open_meas,  err);
+  double_cplx_t cal_load  = vna_apply_cal_point(load_meas,  err);
+
+  printf("cal short: |Γ|=%f ∠%f°\n\r", cplx_mag(cal_short), cplx_ang_deg(cal_short));
+  printf("cal open : |Γ|=%f ∠%f°\n\r", cplx_mag(cal_open),  cplx_ang_deg(cal_open));
+  printf("cal load : |Γ|=%f ∠%f° (expected %f ∠0°)\n\r", cplx_mag(cal_load), cplx_ang_deg(cal_load), cplx_mag(Gamma_Load));
+  printf("Calibration Error Terms:  (e00=%f, e11=%f, Delta e=%f)\n\r\n\r", error_terms.e0, error_terms.e1, error_terms.De);
+
   while(1) {
     double_cplx_t gamma_raw = vna_meas_point_gamma_raw(meas_avgs);
     double_cplx_t gamma_cald = vna_apply_cal_point(gamma_raw, error_terms);
