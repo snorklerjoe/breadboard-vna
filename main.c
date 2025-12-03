@@ -93,7 +93,9 @@ void calibration_routine() {
     }
 
     sleep_ms(100);
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
+    ili9341_box(&tft, 150, 100, 100, 100, 0xF800);
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
@@ -105,7 +107,9 @@ void calibration_routine() {
     }
 
     sleep_ms(100);
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
+    ili9341_box(&tft, 150, 100, 100, 100, 0xF800);
 
 
     // UI: Ask the user to connect a LOAD
@@ -116,7 +120,7 @@ void calibration_routine() {
             break;
         }
     }
-
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_load, cal_avgs);
 
     // Do calibration 3-term error model maths
@@ -310,12 +314,3 @@ int main() {
         }
     }
 }
-/*
-//For formatting loss coordinate values to our graph
-void lossConversion(int *coords, size_t length){
-    for(int i = 0; i < length; i++){
-
-    }
-}
-
-*/
