@@ -27,6 +27,22 @@ double *graph_frequencies;     // An array (size `num_points`)
 double graph_return_loss_dB[num_points];
 double graph_phase_deg[num_points];
 
+//For formatting loss coordinate values to our graph
+void lossConversion(int *coords, size_t length){
+    for(int i = 0; i < length; i++){
+        *coords = 4*(*coords + 40);
+        coords++;
+    }
+}
+
+//For formatting phase coordinate values to our graph
+void phaseConversion(int *coords, size_t length){
+    for(int i = 0; i < length; i++){
+        *coords = 0.5*(*coords + 180);
+        coords++;
+    }
+}
+
 // Initialize VNA hardware
 void init_vna() {
     // Initialize hardware
@@ -53,17 +69,37 @@ void init_vna() {
 void calibration_routine() {
     // UI: Ask the user to connect a SHORT
     // Wait for them to press a button or press the screen or something
+    ili9341_fill_screen(&tft, 0xF800);
+    ili9341_box(&tft, 100, 100, 20, 80, 0x0000);
+    ili9341_drawString(&tft, 100, 100, "Connect Short", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){
+            break;
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
+    ili9341_drawString(&tft, 100, 100, "Connect Open", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){
+            break;
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
 
 
     // UI: Ask the user to connect a LOAD
     // Wait for them to press a button or press the screen or something
+    ili9341_drawString(&tft, 100, 100, "Connect Load", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){
+            break;
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_load, cal_avgs);
 
@@ -110,22 +146,24 @@ int main() {
 
     ili9341_init(&tft);
     ft6206_init();
-    int yLossCoords[100];
-    int xCoords[100];
-    int yPhaseCoords[100];
-    for(int i = 0; i < 100; i++){
+    
+    int yLossCoords[num_points];
+    int xCoords[num_points];
+    int yPhaseCoords[num_points];
+    for(int i = 0; i < num_points; i++){
         //x is y
-        yLossCoords[i] = i - 40;
-        yPhaseCoords[i] = -1*i;
-        xCoords[i] = 10*log10(i);
+        yLossCoords[i] = graph_return_loss_dB[i];
+        yPhaseCoords[i] = graph_phase_deg[i];
+        xCoords[i] = 10*log10(graph_frequencies[i]);
     }
-
+    
     int PPD = 10; //Pixels per decade
 
     uint16_t a, b;
     bool MENU = true;
-    bool change = false;
+    bool change = true;
     ili9341_fill_screen(&tft, 0xF800);
+    calibration_routine();
     ili9341_box(&tft, 0, 300, 20, 20, 0x0000);
     while (1){
         if (ft6206_read_touch(&a, &b)){ //Checking if button that switches between Menu and Graph is pushed
@@ -248,7 +286,8 @@ int main() {
                     ili9341_drawString(&tft, 280, 193 - 0.5*(180+i), str, 0x0000, 0xFFFF, 1);
                 }
                 
-                ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, 100, 0x001F);
+                ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0x001F);
+                ili9341_drawOnCartGraph(&tft, yPhaseCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0xCC1F);
 
                 
 
