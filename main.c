@@ -73,7 +73,7 @@ void init_vna() {
     };
 
     // Initialize measurement data arrays
-    vna_meas_t measurement_data = vna_meas_init(&measurement_setup);
+    measurement_data = vna_meas_init(&measurement_setup);
     
     // Copy pointer to frequencies array
     graph_frequencies = measurement_data.frequencies;
@@ -92,6 +92,7 @@ void calibration_routine() {
         }
     }
 
+    sleep_ms(100);
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
 
     // UI: Ask the user to connect a OPEN
@@ -103,6 +104,7 @@ void calibration_routine() {
         }
     }
 
+    sleep_ms(100);
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
 
 
@@ -153,12 +155,6 @@ int main() {
     int yLossCoords[num_points];
     int xCoords[num_points];
     int yPhaseCoords[num_points];
-    for(int i = 0; i < num_points; i++){
-        //x is y
-        yLossCoords[i] = graph_return_loss_dB[i];
-        yPhaseCoords[i] = graph_phase_deg[i];
-        xCoords[i] = 10*log10(graph_frequencies[i]);
-    }
     
     int PPD = 10; //Pixels per decade
 
@@ -166,6 +162,7 @@ int main() {
     bool change = true;
     ili9341_fill_screen(&tft, 0xF800);
     calibration_routine();
+
     ili9341_box(&tft, 0, 300, 20, 20, 0x0000);
     while (1){
         if (ft6206_read_touch(&a, &b)){ //Checking if button that switches between Menu and Graph is pushed
@@ -262,6 +259,15 @@ int main() {
 
         else{ //In Graph screen
             take_measurement();
+
+            // Copy data
+            for(int i = 0; i < num_points; i++){
+                //x is y
+                yLossCoords[i] = graph_return_loss_dB[i];
+                yPhaseCoords[i] = graph_phase_deg[i];
+                xCoords[i] = 10*log10(graph_frequencies[i]);
+            }
+            change = true;
             
             if(change){
                 ili9341_fill_screen(&tft, 0xF800);
