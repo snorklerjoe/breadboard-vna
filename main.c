@@ -354,9 +354,8 @@ int main() {
                     sprintf(str, "%d", i);
                     ili9341_drawString(&tft, 280, 193 - 0.5*(180+i), str, 0x0000, 0xFFFF, 1);
                 }
-                
-                ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0x001F);
-                ili9341_drawOnCartGraph(&tft, yPhaseCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0xCC1F);
+                if(LOSS) ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0x001F);
+                if(PHASE) ili9341_drawOnCartGraph(&tft, yPhaseCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0xCC1F);
 
                 
 
