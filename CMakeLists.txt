@@ -32,6 +32,8 @@ target_link_libraries(SuperVNA PRIVATE
     pico_bootsel_via_double_reset
     hardware_i2c
     hardware_spi
+    pico_sync
+    pico_multicore
 )
 
 pico_enable_stdio_usb(SuperVNA 1)
