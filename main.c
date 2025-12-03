@@ -92,7 +92,7 @@ void calibration_routine() {
     // Wait for them to press a button or press the screen or something
     ili9341_fill_screen(&tft, 0xF800);
     ili9341_box(&tft, 100, 100, 20, 80, 0x0000);
-    ili9341_drawString(&tft, 100, 100, "Connect Short", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Short  ", 0x0000, 0xFFFF, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -106,7 +106,7 @@ void calibration_routine() {
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Open", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Open   ", 0x0000, 0xFFFF, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -121,7 +121,7 @@ void calibration_routine() {
 
     // UI: Ask the user to connect a LOAD
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Load", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Load  ", 0x0000, 0xFFFF, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
