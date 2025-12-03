@@ -24,8 +24,8 @@ vna_meas_t measurement_data;
 
 // Stores the data that actually get graphed
 double *graph_frequencies;     // An array (size `num_points`)
-double *graph_return_loss_dB;
-double *graph_phase_deg;
+double graph_return_loss_dB[num_points];
+double graph_phase_deg[num_points];
 
 // Initialize VNA hardware
 void init_vna() {
@@ -33,7 +33,7 @@ void init_vna() {
     vna_init();
 
     // Define masurement setup
-    measurement_setup = {
+    measurement_setup = (vna_meas_setup_t){
         // Start (kHz)
         (double) 100,
         // End (kHz)
@@ -44,6 +44,9 @@ void init_vna() {
 
     // Initialize measurement data arrays
     vna_meas_t measurement_data = vna_meas_init(&measurement_setup);
+    
+    // Copy pointer to frequencies array
+    graph_frequencies = &measurement_data.frequencies;
 }
 
 // Calibrate
@@ -72,9 +75,22 @@ void calibration_routine() {
 void take_measurement() {
     // Take measurement and put it in the measurement_data arrays
     vna_sweep_freq(measurement_data, measurement_data.gammas_uncald, meas_avgs);
-    vna_run_correction(measurement_data);  // Apply calibration
 
-    // 
+    // Apply calibration
+    vna_run_correction(measurement_data);
+
+    // Prep data for graphing
+    for(uint i = 0; i < num_points; i++) {
+        // Save the phase angle of the reflection coefficient
+        graph_phase_deg[i] = cplx_ang_deg(
+            measurement_data.gammas_cald[i]
+        );
+
+        // Save the return loss
+        graph_return_loss_dB[i] = gamma_to_s11dB(
+            measurement_data.gammas_cald[i]
+        );
+    }
 }
 
 int main() {
