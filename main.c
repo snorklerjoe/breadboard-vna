@@ -17,8 +17,8 @@ const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
 #define num_points 20
-#define phaseColor 0xABCD
-#define lossColor 0x9876
+#define phaseColor 0x00FF
+#define lossColor 0xFF00
 
 // Stores the setup of the measurement
 vna_meas_setup_t measurement_setup;
