@@ -6,6 +6,77 @@
 #include "hardware/i2c.h"
 #include <math.h>
 
+#include "vna.h"
+#include "vnasweeps.h"
+
+// Number of measurements to average together, discarding one outlier
+const uint meas_avgs = 4;  // For normal measurements
+const uint cal_avgs = 4;   // For initial calibration
+
+// Number of points in a measurement
+const uint num_points = 20;
+
+// Stores the setup of the measurement
+vna_meas_setup_t measurement_setup;
+
+// Stores the data from calibration and measurement
+vna_meas_t measurement_data;
+
+// Stores the data that actually get graphed
+double *graph_frequencies;     // An array (size `num_points`)
+double *graph_return_loss_dB;
+double *graph_phase_deg;
+
+// Initialize VNA hardware
+void init_vna() {
+    // Initialize hardware
+    vna_init();
+
+    // Define masurement setup
+    measurement_setup = {
+        // Start (kHz)
+        (double) 100,
+        // End (kHz)
+        (double) 12000,
+        // Num Points
+        (uint) num_points
+    };
+
+    // Initialize measurement data arrays
+    vna_meas_t measurement_data = vna_meas_init(&measurement_setup);
+}
+
+// Calibrate
+void calibration_routine() {
+    // UI: Ask the user to connect a SHORT
+    // Wait for them to press a button or press the screen or something
+
+    vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
+
+    // UI: Ask the user to connect a OPEN
+    // Wait for them to press a button or press the screen or something
+
+    vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
+
+
+    // UI: Ask the user to connect a LOAD
+    // Wait for them to press a button or press the screen or something
+
+    vna_sweep_freq(measurement_data, measurement_data.cal_load, cal_avgs);
+
+    // Do calibration 3-term error model maths
+    vna_run_cal(measurement_data);
+}
+
+// Takes a measurement
+void take_measurement() {
+    // Take measurement and put it in the measurement_data arrays
+    vna_sweep_freq(measurement_data, measurement_data.gammas_uncald, meas_avgs);
+    vna_run_correction(measurement_data);  // Apply calibration
+
+    // 
+}
+
 int main() {
     stdio_init_all();
 
