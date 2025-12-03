@@ -17,8 +17,8 @@ target_sources(SuperVNA PRIVATE
     adc_sampling.c
     vna.c
     vnasweeps.c
-    ili9341.c
-    ft6206.c
+    ILI9341.c
+    FT6206.c
     glcdfont.c
 )
 

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "ili9341.h"
-#include "ft6206.h"
+#include "ILI9341.h"
+#include "FT6206.h"
 #include "hardware/spi.h"
 #include "hardware/i2c.h"
 #include <math.h>
@@ -46,7 +46,7 @@ void init_vna() {
     vna_meas_t measurement_data = vna_meas_init(&measurement_setup);
     
     // Copy pointer to frequencies array
-    graph_frequencies = &measurement_data.frequencies;
+    graph_frequencies = measurement_data.frequencies;
 }
 
 // Calibrate
@@ -95,6 +95,7 @@ void take_measurement() {
 
 int main() {
     stdio_init_all();
+    init_vna();
 
 
     ili9341_t tft = {
@@ -220,6 +221,8 @@ int main() {
         }
 
         else{ //In Graph screen
+            take_measurement();
+            
             if(change){
                 ili9341_fill_screen(&tft, 0xF800);
                 ili9341_line(&tft, 200, 40, 200, 280, 0x07E0);

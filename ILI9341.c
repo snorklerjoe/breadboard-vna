@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "ili9341.h"
+#include "ILI9341.h"
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 #include <math.h>
