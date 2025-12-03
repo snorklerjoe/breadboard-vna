@@ -17,6 +17,8 @@ const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
 #define num_points 20
+#define phaseColor 0xABCD
+#define lossColor 0x9876
 
 // Stores the setup of the measurement
 vna_meas_setup_t measurement_setup;
@@ -102,7 +104,7 @@ void calibration_routine() {
     sleep_ms(100);
     ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
-    ili9341_box(&tft, 150, 100, 100, 100, 0xF800);
+    ili9341_box(&tft, 150, 100, 100, 100, 0x0000);
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
@@ -116,7 +118,7 @@ void calibration_routine() {
     sleep_ms(100);
     ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
-    ili9341_box(&tft, 150, 100, 100, 100, 0xF800);
+    ili9341_box(&tft, 150, 100, 100, 100, 0x0000);
 
 
     // UI: Ask the user to connect a LOAD
@@ -346,16 +348,16 @@ int main() {
 
                 for(int i = -40; i < 6; i = i + 5){
                     sprintf(str, "%d", i);
-                    ili9341_drawString(&tft, 25, 193 - 4*(40+i), str, 0x0000, 0xFFFF, 1);
+                    ili9341_drawString(&tft, 25, 193 - 4*(40+i), str, lossColor, 0x0000, 1);
                     ili9341_line(&tft, 200 - 4*(40+i), 40, 200 - 4*(40+i), 280, 0x07E0);
                 }
 
                 for(int i = -180; i < 200; i = i + 40){
                     sprintf(str, "%d", i);
-                    ili9341_drawString(&tft, 280, 193 - 0.5*(180+i), str, 0x0000, 0xFFFF, 1);
+                    ili9341_drawString(&tft, 280, 193 - 0.5*(180+i), str, phaseColor, 0x0000, 1);
                 }
-                if(LOSS) ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0x001F);
-                if(PHASE) ili9341_drawOnCartGraph(&tft, yPhaseCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), 0xCC1F);
+                if(LOSS) ili9341_drawOnCartGraph(&tft, yLossCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), lossColor);
+                if(PHASE) ili9341_drawOnCartGraph(&tft, yPhaseCoords, xCoords, sizeof(xCoords)/sizeof(xCoords[0]), phaseColor);
 
                 
 
