@@ -6,7 +6,7 @@
 #define ADC_SAMPLING_H
 
 // Sampling and filtering parameters
-#define NUM_SAMPLES 2048
+#define NUM_SAMPLES 512
 #define FIR_N 64
 #define FIR_WIDTH 1  // kHz
 
