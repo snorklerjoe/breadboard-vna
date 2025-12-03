@@ -322,7 +322,7 @@ int main() {
                     //x is y
                     yLossCoords[i] = graph_return_loss_dB[i];
                     yPhaseCoords[i] = graph_phase_deg[i];
-                    xCoords[i] = 10*log10(graph_frequencies[i]);
+                    xCoords[i] = PPD*log10(graph_frequencies[i]);
                 }
 
                 // Release lock
