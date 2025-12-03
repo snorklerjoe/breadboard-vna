@@ -161,6 +161,8 @@ int main() {
     int yPhaseCoords[num_points];
     
     int PPD = 10; //Pixels per decade
+    bool LOSS = true; //Display loss
+    bool PHASE = true; //Display phase
 
     bool MENU = true;
     bool change = true;
@@ -201,7 +203,7 @@ int main() {
                 ili9341_drawString(&tft, 50, 200, "50", 0x0000, 0xFFFF, 2);
 
                 ili9341_box(&tft, 80, 150, 20, 50, 0x0000);
-                ili9341_drawString(&tft, 150, 80, "GAIN", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 150, 80, "LOSS", 0x0000, 0xFFFF, 2);
                 ili9341_box(&tft, 110, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 110, "PHAS", 0x0000, 0xFFFF, 2);
                 ili9341_box(&tft, 140, 150, 20, 50, 0x0000);
@@ -211,9 +213,9 @@ int main() {
             }
 
             if (ft6206_read_touch(&a, &b)){
-                if(b <= 260 && b >= 230){
+                if(b <= 260 && b >= 230){ //Freq buttons
                     if(a >= 80 && a <= 100){
-                        for(int i = 0; i < sizeof(xCoords)/sizeof(xCoords[0]); i++){
+                        for(int i = 0; i < num_points; i++){
                             xCoords[i] = 10*xCoords[i]/PPD;
                         }
                         PPD = 10;
@@ -255,6 +257,29 @@ int main() {
                         PPD = 50;
                         ili9341_box(&tft, 200, 50, 20, 30, 0x001F);
                         ili9341_drawString(&tft, 50, 200, "50", 0x0000, 0xFFFF, 2);
+                        sleep_ms(100);
+                    }
+                }
+                else if(b <= 160 && b >= 130){ //Toggle buttons
+                    if(a >= 80 && a <= 100){
+                        ili9341_box(&tft, 80, 150, 20, 30, 0x001F);
+                        ili9341_drawString(&tft, 150, 80, "LOSS", 0x0000, 0xFFFF, 2);
+                        LOSS = true;
+                        PHASE = false;
+                        sleep_ms(100);
+                    }
+                    else if(a >= 110 && a <= 130){
+                        ili9341_box(&tft, 110, 150, 20, 30, 0x001F);
+                        ili9341_drawString(&tft, 150, 110, "PHAS", 0x0000, 0xFFFF, 2);
+                        LOSS = false;
+                        PHASE = true;
+                        sleep_ms(100);
+                    }
+                    else if(a >= 140 && a <= 160){
+                        ili9341_box(&tft, 140, 150, 20, 30, 0x001F);
+                        ili9341_drawString(&tft, 150, 140, "BOTH", 0x0000, 0xFFFF, 2);
+                        LOSS = true;
+                        PHASE = true;
                         sleep_ms(100);
                     }
                 }
