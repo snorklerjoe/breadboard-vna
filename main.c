@@ -267,6 +267,8 @@ int main() {
                 yPhaseCoords[i] = graph_phase_deg[i];
                 xCoords[i] = 10*log10(graph_frequencies[i]);
             }
+            lossConversion(yLossCoords, num_points);
+            phaseConversion(yPhaseCoords, num_points);
             change = true;
             
             if(change){
