@@ -27,6 +27,20 @@ double *graph_frequencies;     // An array (size `num_points`)
 double graph_return_loss_dB[num_points];
 double graph_phase_deg[num_points];
 
+// Global coordinate buffers
+uint16_t a, b;
+
+// TFT Display setup
+ili9341_t tft = {
+    .spi = spi1,
+    .cs  = 13,
+    .dc  = 12,
+    .rst = 7,
+    .mosi = 11,
+    .sck = 10
+};
+
+
 //For formatting loss coordinate values to our graph
 void lossConversion(int *coords, size_t length){
     for(int i = 0; i < length; i++){
@@ -133,17 +147,6 @@ int main() {
     stdio_init_all();
     init_vna();
 
-
-    ili9341_t tft = {
-        .spi = spi1,
-        .cs  = 13,
-        .dc  = 12,
-        .rst = 7,
-        .mosi = 11,
-        .sck = 10
-    };
-
-
     ili9341_init(&tft);
     ft6206_init();
     
@@ -159,7 +162,6 @@ int main() {
     
     int PPD = 10; //Pixels per decade
 
-    uint16_t a, b;
     bool MENU = true;
     bool change = true;
     ili9341_fill_screen(&tft, 0xF800);
@@ -219,7 +221,7 @@ int main() {
                         sleep_ms(100);
                     }
                     else if(a >= 110 && a <= 130){
-                        for(int i = 0; i < 100; i++){
+                        for(int i = 0; i < num_points; i++){
                             xCoords[i] = 20*xCoords[i]/PPD;
                         }
                         PPD = 20;
@@ -228,7 +230,7 @@ int main() {
                         sleep_ms(100);
                     }
                     else if(a >= 140 && a <= 160){
-                        for(int i = 0; i < 100; i++){
+                        for(int i = 0; i < num_points; i++){
                             xCoords[i] = 30*xCoords[i]/PPD;
                         }
                         PPD = 30;
@@ -237,7 +239,7 @@ int main() {
                         sleep_ms(100);
                     }
                     else if(a >= 170 && a <= 190){
-                        for(int i = 0; i < 100; i++){
+                        for(int i = 0; i < num_points; i++){
                             xCoords[i] = 40*xCoords[i]/PPD;
                         }
                         PPD = 40;
@@ -246,7 +248,7 @@ int main() {
                         sleep_ms(100);
                     }
                     else if(a >= 200 && a <= 220){
-                        for(int i = 0; i < 100; i++){
+                        for(int i = 0; i < num_points; i++){
                             xCoords[i] = 50*xCoords[i]/PPD;
                         }
                         PPD = 50;
