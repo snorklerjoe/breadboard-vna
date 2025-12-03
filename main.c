@@ -51,19 +51,49 @@ void init_vna() {
 
 // Calibrate
 void calibration_routine() {
+    //Change = true? Set change as global var? maybe do that before calling function? Maybe do that later?
     // UI: Ask the user to connect a SHORT
     // Wait for them to press a button or press the screen or something
+    ili9341_fill_screen(&tft, 0xF800);
+    ili9341_box(&tft, 100, 100, 50, 20, 0x0000);
+    ili9341_drawString(&tft, 100, 100, "Connect Short", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){ 
+            if(a <= 40 && b <= 40){//Set proper bounds here
+                sleep_ms(100);
+                break;
+            }
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
+    ili9341_drawString(&tft, 100, 100, "Connect Open", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){ 
+            if(a <= 40 && b <= 40){//Set proper bounds here
+                sleep_ms(100);
+                break;
+            }
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
 
 
     // UI: Ask the user to connect a LOAD
     // Wait for them to press a button or press the screen or something
+    ili9341_drawString(&tft, 100, 100, "Connect Load", 0x0000, 0xFFFF, 1);
+    while (1){
+        if (ft6206_read_touch(&a, &b)){ 
+            if(a <= 40 && b <= 40){//Set proper bounds here
+                sleep_ms(100);
+                break;
+            }
+        }
+    }
 
     vna_sweep_freq(measurement_data, measurement_data.cal_load, cal_avgs);
 
