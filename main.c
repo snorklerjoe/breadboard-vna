@@ -94,7 +94,7 @@ void calibration_routine() {
     // Wait for them to press a button or press the screen or something
     ili9341_fill_screen(&tft, 0x0000);
     ili9341_box(&tft, 100, 100, 20, 80, 0x0000);
-    ili9341_drawString(&tft, 100, 100, "Connect Short  ", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Short  ", 0xFFFF, 0x0000, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -102,13 +102,13 @@ void calibration_routine() {
     }
 
     sleep_ms(100);
-    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0xFFFF, 0x0000, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_short, cal_avgs);
     ili9341_box(&tft, 150, 100, 100, 100, 0x0000);
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Open   ", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Open   ", 0xFFFF, 0x0000, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -116,20 +116,20 @@ void calibration_routine() {
     }
 
     sleep_ms(100);
-    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0xFFFF, 0x0000, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_open, cal_avgs);
     ili9341_box(&tft, 150, 100, 100, 100, 0x0000);
 
 
     // UI: Ask the user to connect a LOAD
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Load  ", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Load  ", 0xFFFF, 0x0000, 1);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
         }
     }
-    ili9341_drawString(&tft, 100, 150, "Loading...", 0x0000, 0xFFFF, 1);
+    ili9341_drawString(&tft, 100, 150, "Loading...", 0xFFFF, 0x0000, 1);
     vna_sweep_freq(measurement_data, measurement_data.cal_load, cal_avgs);
 
     // Do calibration 3-term error model maths
@@ -211,28 +211,28 @@ int main() {
             if(change){
                 ili9341_fill_screen(&tft, 0x0000);
                 ili9341_box(&tft, 0, 300, 20, 20, 0xFFFF);
-                ili9341_drawString(&tft, 140, 0, "MENU", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 140, 0, "MENU", 0xFFFF, 0x0000, 2);
                 
-                ili9341_drawString(&tft, 50, 50, "PPD", 0x0000, 0xFFFF, 2);
-                ili9341_drawString(&tft, 150, 50, "TOG", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 50, "PPD", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 150, 50, "TOG", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 50, 20, 30, 0xFFFF);
-                ili9341_drawString(&tft, 50, 80, "10", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 80, "10", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 110, 50, 20, 30, 0xFFFF);
-                ili9341_drawString(&tft, 50, 110, "20", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 110, "20", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 140, 50, 20, 30, 0xFFFF);
-                ili9341_drawString(&tft, 50, 140, "30", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 140, "30", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 170, 50, 20, 30, 0xFFFF);
-                ili9341_drawString(&tft, 50, 170, "40", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 170, "40", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 200, 50, 20, 30, 0xFFFF);
-                ili9341_drawString(&tft, 50, 200, "50", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 50, 200, "50", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 150, 20, 50, 0xFFFF);
-                ili9341_drawString(&tft, 150, 80, "LOSS", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 150, 80, "LOSS", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 110, 150, 20, 50, 0xFFFF);
-                ili9341_drawString(&tft, 150, 110, "PHAS", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 150, 110, "PHAS", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 140, 150, 20, 50, 0xFFFF);
-                ili9341_drawString(&tft, 150, 140, "BOTH", 0x0000, 0xFFFF, 2);
+                ili9341_drawString(&tft, 150, 140, "BOTH", 0xFFFF, 0x0000, 2);
                 
                 change = false;
             }
@@ -245,7 +245,7 @@ int main() {
                         }
                         PPD = 10;
                         ili9341_box(&tft, 80, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 80, "10", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 50, 80, "10", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 110 && a <= 130){
@@ -254,7 +254,7 @@ int main() {
                         }
                         PPD = 20;
                         ili9341_box(&tft, 110, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 110, "20", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 50, 110, "20", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 140 && a <= 160){
@@ -263,7 +263,7 @@ int main() {
                         }
                         PPD = 30;
                         ili9341_box(&tft, 140, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 140, "30", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 50, 140, "30", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 170 && a <= 190){
@@ -272,7 +272,7 @@ int main() {
                         }
                         PPD = 40;
                         ili9341_box(&tft, 170, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 170, "40", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 50, 170, "40", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 200 && a <= 220){
@@ -281,28 +281,28 @@ int main() {
                         }
                         PPD = 50;
                         ili9341_box(&tft, 200, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 200, "50", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 50, 200, "50", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                 }
                 else if(b <= 160 && b >= 130){ //Toggle buttons
                     if(a >= 80 && a <= 100){
                         ili9341_box(&tft, 80, 150, 20, 50, 0x001F);
-                        ili9341_drawString(&tft, 150, 80, "LOSS", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 150, 80, "LOSS", 0xFFFF, 0x0000, 2);
                         LOSS = true;
                         PHASE = false;
                         sleep_ms(100);
                     }
                     else if(a >= 110 && a <= 130){
                         ili9341_box(&tft, 110, 150, 20, 50, 0x001F);
-                        ili9341_drawString(&tft, 150, 110, "PHAS", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 150, 110, "PHAS", 0xFFFF, 0x0000, 2);
                         LOSS = false;
                         PHASE = true;
                         sleep_ms(100);
                     }
                     else if(a >= 140 && a <= 160){
                         ili9341_box(&tft, 140, 150, 20, 50, 0x001F);
-                        ili9341_drawString(&tft, 150, 140, "BOTH", 0x0000, 0xFFFF, 2);
+                        ili9341_drawString(&tft, 150, 140, "BOTH", 0xFFFF, 0x0000, 2);
                         LOSS = true;
                         PHASE = true;
                         sleep_ms(100);
@@ -341,7 +341,7 @@ int main() {
                 int j = 40;
                 for(int i = 0; j < 280; i++){//changed from 320
                     sprintf(str, "%d", i);
-                    ili9341_drawString(&tft, j, 200, str, 0x0000, 0xFFFF, 1);
+                    ili9341_drawString(&tft, j, 200, str, 0xFFFF, 0x0000, 1);
                     ili9341_line(&tft, 200, j, 0, j, 0x07E0);
                     j = j + PPD;
                 }
@@ -361,8 +361,8 @@ int main() {
 
                 
 
-                ili9341_drawString(&tft, 140, 220, "Frequency(Hz)", 0x0000, 0xFFFF, 1);
-                ili9341_drawString(&tft, 0, 220, "Gain(dB)", 0x0000, 0xFFFF, 1);
+                ili9341_drawString(&tft, 140, 220, "Frequency(Hz)", 0xFFFF, 0x0000, 1);
+                ili9341_drawString(&tft, 0, 220, "Gain(dB)", 0xFFFF, 0x0000, 1);
 
                 ili9341_box(&tft, 0, 300, 20, 20, 0xFFFF);
                 change = false;
