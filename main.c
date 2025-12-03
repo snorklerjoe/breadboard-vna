@@ -6,12 +6,14 @@
 #include "hardware/i2c.h"
 #include <math.h>
 
+#include <pico/mutex.h>
+#include <pico/multicore.h>
 #include "vna.h"
 #include "vnasweeps.h"
 
 // Number of measurements to average together, discarding one outlier
-const uint meas_avgs = 4;  // For normal measurements
-const uint cal_avgs = 4;   // For initial calibration
+const uint meas_avgs = 3;  // For normal measurements
+const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
 #define num_points 20
@@ -39,6 +41,11 @@ ili9341_t tft = {
     .mosi = 11,
     .sck = 10
 };
+
+// Mutex for data arrays that get graphed
+mutex_t data_mutex;
+// Tells when new data is available
+bool change = false;
 
 
 //For formatting loss coordinate values to our graph
@@ -136,6 +143,7 @@ void take_measurement() {
     vna_run_correction(measurement_data);
 
     // Prep data for graphing
+    mutex_enter_blocking(&data_mutex);
     for(uint i = 0; i < num_points; i++) {
         // Save the phase angle of the reflection coefficient
         graph_phase_deg[i] = cplx_ang_deg(
@@ -147,6 +155,15 @@ void take_measurement() {
             measurement_data.gammas_cald[i]
         );
     }
+    mutex_exit(&data_mutex);
+}
+
+// Measurement task to run on core 2
+void meas_core_task() {
+    while(1) {
+        take_measurement();
+        change = true;
+    }
 }
 
 int main() {
@@ -155,6 +172,8 @@ int main() {
 
     ili9341_init(&tft);
     ft6206_init();
+
+    mutex_init(&data_mutex);  // Initialize mutex for multicore
     
     int yLossCoords[num_points];
     int xCoords[num_points];
@@ -165,9 +184,13 @@ int main() {
     bool PHASE = true; //Display phase
 
     bool MENU = true;
-    bool change = true;
     ili9341_fill_screen(&tft, 0xF800);
+
+    // RUN CALIBRATION:
     calibration_routine();
+
+    // Start measurement loop in the background:
+    multicore_launch_core1(meas_core_task);
 
     ili9341_box(&tft, 0, 300, 20, 20, 0x0000);
     while (1){
@@ -287,20 +310,27 @@ int main() {
         }
 
         else{ //In Graph screen
-            take_measurement();
-
-            // Copy data
-            for(int i = 0; i < num_points; i++){
-                //x is y
-                yLossCoords[i] = graph_return_loss_dB[i];
-                yPhaseCoords[i] = graph_phase_deg[i];
-                xCoords[i] = 10*log10(graph_frequencies[i]);
-            }
-            lossConversion(yLossCoords, num_points);
-            phaseConversion(yPhaseCoords, num_points);
-            change = true;
-            
             if(change){
+                // Acknowledge change
+                change = false;
+
+                // Acquire lock
+                mutex_enter_blocking(&data_mutex);
+
+                // Copy data
+                for(int i = 0; i < num_points; i++){
+                    //x is y
+                    yLossCoords[i] = graph_return_loss_dB[i];
+                    yPhaseCoords[i] = graph_phase_deg[i];
+                    xCoords[i] = 10*log10(graph_frequencies[i]);
+                }
+
+                // Release lock
+                mutex_exit(&data_mutex);
+
+                lossConversion(yLossCoords, num_points);
+                phaseConversion(yPhaseCoords, num_points);
+
                 ili9341_fill_screen(&tft, 0xF800);
                 ili9341_line(&tft, 200, 40, 200, 280, 0x07E0);
                 ili9341_line(&tft, 200, 40, 0, 40, 0x07E0);

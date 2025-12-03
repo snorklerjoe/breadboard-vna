@@ -7,7 +7,7 @@
 
 // Sampling and filtering parameters
 #define NUM_SAMPLES 512
-#define FIR_N 64
+#define FIR_N 32
 #define FIR_WIDTH 1  // kHz
 
 // GPIO for I and Q ADC inputs
