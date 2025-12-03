@@ -14,7 +14,7 @@ const uint meas_avgs = 4;  // For normal measurements
 const uint cal_avgs = 4;   // For initial calibration
 
 // Number of points in a measurement
-const uint num_points = 20;
+#define num_points 20
 
 // Stores the setup of the measurement
 vna_meas_setup_t measurement_setup;
@@ -98,7 +98,7 @@ int main() {
 
 
     ili9341_t tft = {
-        .spi = spi0,
+        .spi = spi1,
         .cs  = 13,
         .dc  = 12,
         .rst = 7,
