@@ -5,11 +5,11 @@
 void ft6206_init() {
     i2c_init(i2c0, 400000);
 
-    gpio_set_function(4, GPIO_FUNC_I2C);  // SDA
-    gpio_set_function(5, GPIO_FUNC_I2C);  // SCL
+    gpio_set_function(8, GPIO_FUNC_I2C);  // SDA
+    gpio_set_function(9, GPIO_FUNC_I2C);  // SCL
 
-    gpio_pull_up(4);
-    gpio_pull_up(5);
+    gpio_pull_up(8);
+    gpio_pull_up(9);
 
     uint8_t threshReg = 0x80; //Tgreshold register
     uint8_t threshVal = 0x03; //Threshold value, default is 0x12?

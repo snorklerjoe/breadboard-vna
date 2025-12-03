@@ -17,6 +17,9 @@ target_sources(SuperVNA PRIVATE
     adc_sampling.c
     vna.c
     vnasweeps.c
+    ili9341.c
+    ft6206.c
+    glcdfont.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
@@ -27,6 +30,7 @@ target_link_libraries(SuperVNA PRIVATE
     hardware_irq
     hardware_dma
     pico_bootsel_via_double_reset
+    hardware_i2c
     hardware_spi
 )
 

@@ -83,11 +83,11 @@ int main() {
 
     ili9341_t tft = {
         .spi = spi0,
-        .cs  = 17,
-        .dc  = 16,
-        .rst = 20,
-        .mosi = 19,
-        .sck = 18
+        .cs  = 13,
+        .dc  = 12,
+        .rst = 7,
+        .mosi = 11,
+        .sck = 10
     };
 
 
