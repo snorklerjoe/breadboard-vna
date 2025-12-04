@@ -94,7 +94,7 @@ void calibration_routine() {
     // Wait for them to press a button or press the screen or something
     ili9341_fill_screen(&tft, 0x0000);
     ili9341_box(&tft, 100, 100, 20, 80, 0x0000);
-    ili9341_drawString(&tft, 100, 100, "Connect Short  ", 0xFFFF, 0x0000, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Short  ", 0xFFFF, 0x0000, 2);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -108,7 +108,7 @@ void calibration_routine() {
 
     // UI: Ask the user to connect a OPEN
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Open   ", 0xFFFF, 0x0000, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Open   ", 0xFFFF, 0x0000, 2);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -123,7 +123,7 @@ void calibration_routine() {
 
     // UI: Ask the user to connect a LOAD
     // Wait for them to press a button or press the screen or something
-    ili9341_drawString(&tft, 100, 100, "Connect Load  ", 0xFFFF, 0x0000, 1);
+    ili9341_drawString(&tft, 100, 100, "Connect Load  ", 0xFFFF, 0x0000, 2);
     while (1){
         if (ft6206_read_touch(&a, &b)){
             break;
@@ -216,22 +216,22 @@ int main() {
                 ili9341_drawString(&tft, 50, 50, "PPD", 0xFFFF, 0x0000, 2);
                 ili9341_drawString(&tft, 150, 50, "TOG", 0xFFFF, 0x0000, 2);
 
-                ili9341_box(&tft, 80, 50, 20, 30, 0xFFFF);
+                ili9341_box(&tft, 80, 50, 20, 30, 0x0000);
                 ili9341_drawString(&tft, 50, 80, "10", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 110, 50, 20, 30, 0xFFFF);
+                ili9341_box(&tft, 110, 50, 20, 30, 0x0000);
                 ili9341_drawString(&tft, 50, 110, "20", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 140, 50, 20, 30, 0xFFFF);
+                ili9341_box(&tft, 140, 50, 20, 30, 0x0000);
                 ili9341_drawString(&tft, 50, 140, "30", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 170, 50, 20, 30, 0xFFFF);
+                ili9341_box(&tft, 170, 50, 20, 30, 0x0000);
                 ili9341_drawString(&tft, 50, 170, "40", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 200, 50, 20, 30, 0xFFFF);
+                ili9341_box(&tft, 200, 50, 20, 30, 0x0000);
                 ili9341_drawString(&tft, 50, 200, "50", 0xFFFF, 0x0000, 2);
 
-                ili9341_box(&tft, 80, 150, 20, 50, 0xFFFF);
+                ili9341_box(&tft, 80, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 80, "LOSS", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 110, 150, 20, 50, 0xFFFF);
+                ili9341_box(&tft, 110, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 110, "PHAS", 0xFFFF, 0x0000, 2);
-                ili9341_box(&tft, 140, 150, 20, 50, 0xFFFF);
+                ili9341_box(&tft, 140, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 140, "BOTH", 0xFFFF, 0x0000, 2);
                 
                 change = false;
