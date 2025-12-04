@@ -325,7 +325,7 @@ int main() {
                     //x is y
                     yLossCoords[i] = graph_return_loss_dB[i];
                     yPhaseCoords[i] = graph_phase_deg[i];
-                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000);  // graph_frequencies is in kHz, want Hz
+                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000)-4*PPD;  // graph_frequencies is in kHz, want Hz
                 }
 
                 // Release lock
