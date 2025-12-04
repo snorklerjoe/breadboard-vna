@@ -36,6 +36,8 @@ double vna_set_freq(uint16_t freq) {
     uint16_t srcfreq_real = lofreq_real + RDG_ADC_FREQ;
     ad9834_setfreq(srcfreq_real*1000);
 
+    printf("#SetFreq to %d\n\r", srcfreq_real);
+
     // Sleep to wait for steady-state
     sleep_ms(RDG_FREQCHANGE_DELAY_MS);
 
