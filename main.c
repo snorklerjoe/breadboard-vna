@@ -218,15 +218,15 @@ int main() {
                 ili9341_drawString(&tft, 150, 50, "TOG", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 80, "30", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 80, "50", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 110, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 110, "40", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 110, "60", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 140, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 140, "50", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 140, "70", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 170, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 170, "60", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 170, "80", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 200, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 200, "70", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 200, "90", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 80, "LOSS", 0xFFFF, 0x0000, 2);
