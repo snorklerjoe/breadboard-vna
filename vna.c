@@ -7,13 +7,21 @@
 #include "ad9834.h"
 #include <stdio.h>
 #include "complex_math.h"
+#include <pico/sync.h>
 
+static double ref_I[NUM_SAMPLES/2];
+static double ref_Q[NUM_SAMPLES/2];
+static double rfl_I[NUM_SAMPLES/2];
+static double rfl_Q[NUM_SAMPLES/2];
 
 // Initializes all VNA hardware
 void vna_init() {
   ad9834_init();    // Initialize the source
   rx_init();        // Initialize the receiver
   rx_adc_init();    // Initialize the ADC
+
+  gpio_init(SRC_RESET);
+  gpio_set_dir(SRC_RESET, true);
 }
 
 // Sets LO as close as possible to a given frequency in kHz + ADC_FREQ
@@ -59,23 +67,54 @@ double vna_refl_levelcheck(double freq) {
 
 static double_cplx_t vna_meas_point_gamma_raw_once() {
     // Measure incident power (vector)
+    uint32_t int_sav = save_and_disable_interrupts();  // Timing must be as constant as possible here for reduced phase noise in measurement
     rx_set_incident();
-    sleep_ms(RDG_STEADYSTATE_DELAY_MS);
-    double reference_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
-    double reference_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
-    double_cplx_t reference_rx = {reference_I, reference_Q};
+    gpio_put(SRC_RESET, false);
+    sleep_us(500);
+    // for(int i = 0; i < 50000; i++)
+        // asm volatile("nop \n nop \n nop");
+    take_interleaved_iq_samples(ref_I, ref_Q);
+
+    // double reference_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
+    // double reference_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
+    // double_cplx_t reference_rx = {reference_I, reference_Q};
 
     // Measure reflected power (vector)
+    gpio_put(SRC_RESET, true);
+    sleep_ms(1);
     rx_set_reflected();
-    sleep_ms(RDG_STEADYSTATE_DELAY_MS);
-    double refl_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
-    double refl_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
-    double_cplx_t reflected_rx = {refl_I, refl_Q};
+    gpio_put(SRC_RESET, false);
+    sleep_us(500);
+    // for(int i = 0; i < 50000; i++)
+        // asm volatile("nop \n nop \n nop");
+    take_interleaved_iq_samples(rfl_I, rfl_Q);
+    restore_interrupts(int_sav);
+    gpio_put(SRC_RESET, true);  // Put source back in reset state
+
+    // double refl_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
+    // double refl_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
+    // double_cplx_t reflected_rx = {refl_I, refl_Q};
 
     // Calculate Gamma
+    // double_cplx_t gamma_raw = cplx_div(
+    //     reflected_rx,
+    //     reference_rx
+    // );
+
+    printf("\n\r");
+    uint len = NUM_SAMPLES_PROCESSED/2;
+    for(int i =NUM_SAMPLES/2 - len; i < NUM_SAMPLES/2; i++) {
+        printf("%f,%f,%f,%f\n\r", rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+    }
+
+    // printf("Phasor: %f, %f\n\r", calc_phasor(ref_I, ref_Q).a, calc_phasor(ref_I, ref_Q).b);
+    double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
+    double_cplx_t ref_phasor = calc_phasor(ref_I, ref_Q);
+    printf("#Refl=%f+j%f, Ref=%f+j%f\n\r", rfl_phasor.a, rfl_phasor.b, ref_phasor.a, ref_phasor.b);
+
     double_cplx_t gamma_raw = cplx_div(
-        reflected_rx,
-        reference_rx
+        rfl_phasor,
+        ref_phasor
     );
 
     return gamma_raw;

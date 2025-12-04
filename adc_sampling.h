@@ -8,13 +8,17 @@
 #include "complex_math.h"
 
 // Sampling and filtering parameters
-#define ADC_INPUT_FREQ 10  // kHz
-#define NUM_SAMPLES 512
-#define FIR_N 32
-#define FIR_WIDTH 1  // kHz
+#define ADC_INPUT_FREQ 50  // kHz
+#define NUM_SAMPLES 100
 
 // Hardware parameter
-#define ADC_TOTAL_SAMPLE_RATE 200000
+#define ADC_TOTAL_SAMPLE_RATE 500
+
+// All other samples are discarded
+#define NUM_SAMPLES_PROCESSED ((double) ADC_TOTAL_SAMPLE_RATE / (double) ADC_INPUT_FREQ) * 4
+
+#define FIR_N 32
+#define FIR_WIDTH 1  // kHz
 
 // GPIO for I and Q ADC inputs
 #define ADC_I 26 
@@ -22,7 +26,7 @@
 #define ADC_RR_MASK 0x03  // Bits 0 and 1, for 26 and 27
 
 // Math utilities
-#define MATH_PI 3.14159265
+#define MATH_PI 3.14159265359
 #define imin(a, b) (a < b) ? a : b
 #define imax(a, b) (a > b) ? a : b
 

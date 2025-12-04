@@ -60,9 +60,9 @@ void rx_adc_init() {
 // Specifically, takes NUM_SAMPLES total samples
 void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     // Set up ADC for this sampling
-    adc_select_input(ADC_I - 26);  // Start with I signal
     adc_set_round_robin(ADC_RR_MASK);
-    adc_fifo_setup(true, true, 1, false, true);
+    adc_select_input(ADC_I - 26);  // Start with I signal
+    adc_fifo_setup(true, true, 1, false, false);
     adc_set_clkdiv(0);
 
     // Set up ADC DMA channel
@@ -84,6 +84,7 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     );
 
     // Start the capture
+    adc_select_input(ADC_I - 26);  // Start with I signal
     adc_run(true);
     dma_channel_wait_for_finish_blocking(dma_ch);
     adc_run(false);
@@ -94,18 +95,26 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     // Find bias (average) of each signal to remove it
     double i_bias = 0.0;
     double q_bias = 0.0;
-    for(int i = 0; i < NUM_SAMPLES; i = i + 2)
+    int num_i_samples = 0;
+    int num_q_samples = 0;
+    for(int i = NUM_SAMPLES-NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i = i + 2) {
         i_bias += dma_buf[i];
-    for(int i = 1; i < NUM_SAMPLES; i = i + 2)
+        num_i_samples++;
+    }
+    for(int i = NUM_SAMPLES-NUM_SAMPLES_PROCESSED + 1; i < NUM_SAMPLES; i = i + 2) {
         q_bias += dma_buf[i];
-    i_bias = (double)i_bias / (double)(uint)(NUM_SAMPLES / 2);
-    q_bias = (double)q_bias / (double)(uint)(NUM_SAMPLES / 2);
+        num_q_samples++;
+    }
+    i_bias = (double)i_bias / num_i_samples;
+    q_bias = (double)q_bias / num_q_samples;
+    // i_bias = (double)(2048);   // Constant bias assumption does not work.
+    // q_bias = (double)(2048);
 
     // Save & remove bias
     for(int i = 0; i < NUM_SAMPLES; i = i + 2)
-        I_samples[i>>1] = ((double)dma_buf[i]) - i_bias;
+        I_samples[i/2] = ((double)dma_buf[i]) - i_bias;
     for(int i = 1; i < NUM_SAMPLES; i = i + 2)
-        Q_samples[i>>1] = ((double)dma_buf[i]) - i_bias;
+        Q_samples[i/2] = ((double)dma_buf[i]) - q_bias;
 }
 
 // Measures a vector based on a pair of arrays of NUM_SAMPLES/2 samples of I and Q signals
@@ -118,18 +127,25 @@ double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
     double total_Q = 0.0;
 
     // Phase step in radians that each sample represents
-    double phase_step = 4.0 * MATH_PI * ADC_INPUT_FREQ / ADC_TOTAL_SAMPLE_RATE;
+    double phase_step = 2.0 * MATH_PI * (double)ADC_INPUT_FREQ / (double)ADC_TOTAL_SAMPLE_RATE;
     double cur_phase = 0.0;
 
-    for(int i = 0; i < NUM_SAMPLES/2; i++) { // For each (I,Q) pair
+    // printf("\n\r");
+    // for(int i = 1; i < NUM_SAMPLES; i=i+2) {
+    //     printf("%i,%i\n\r", dma_buf[i-1], dma_buf[i]);
+    // }
+
+    for(int i = NUM_SAMPLES/2 - NUM_SAMPLES_PROCESSED/2; i < NUM_SAMPLES/2; i++) { // For each (I,Q) pair
+        // printf("%f,%f\n\r", I_samples[i], Q_samples[i]);
         // a = I*cos - Q*sin
-        total_I = total_I + I_samples[i] * cos(cur_phase) - Q_samples[i] * sin(cur_phase);
+        // Q is shifted because of the round robin
+        total_I += I_samples[i] * cos(cur_phase) - Q_samples[i] * sin(cur_phase + phase_step);
 
         // b = I*sin + Q*cos
-        total_Q = total_Q + I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase);
+        total_Q += I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase + phase_step);
 
         // Step forwards
-        cur_phase = cur_phase + phase_step;
+        cur_phase += 2.0*phase_step;
     }
 
     return (double_cplx_t) {total_I, total_Q};
