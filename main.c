@@ -325,7 +325,7 @@ int main() {
                     //x is y
                     yLossCoords[i] = graph_return_loss_dB[i];
                     yPhaseCoords[i] = graph_phase_deg[i];
-                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000)-4*PPD;  // graph_frequencies is in kHz, want Hz
+                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000)-5*PPD;  // graph_frequencies is in kHz, want Hz
                 }
 
                 // Release lock
@@ -340,7 +340,7 @@ int main() {
                 ili9341_line(&tft, 200, 280, 0, 280, 0x07E0); //Make sure this works
                 char str[5];
                 int j = 40;
-                for(int i = 4; j < 280; i++){//changed from 320
+                for(int i = 5; j < 280; i++){//changed from 320
                     sprintf(str, "%d", i);
                     ili9341_drawString(&tft, j, 201, str, 0xFFFF, 0x0000, 1);
                     ili9341_line(&tft, 200, j, 0, j, 0x07E0);
