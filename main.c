@@ -339,7 +339,7 @@ int main() {
                 ili9341_line(&tft, 200, 280, 0, 280, 0x07E0); //Make sure this works
                 char str[5];
                 int j = 40;
-                for(int i = 0; j < 280; i++){//changed from 320
+                for(int i = 4; j < 280; i++){//changed from 320
                     sprintf(str, "%d", i);
                     ili9341_drawString(&tft, j, 201, str, 0xFFFF, 0x0000, 1);
                     ili9341_line(&tft, 200, j, 0, j, 0x07E0);
