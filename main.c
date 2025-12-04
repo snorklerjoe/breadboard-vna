@@ -12,11 +12,12 @@
 #include "vnasweeps.h"
 
 // Number of measurements to average together, discarding one outlier
-const uint meas_avgs = 3;  // For normal measurements
+const uint meas_avgs = 1;  // For normal measurements
 const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
-#define num_points 20
+#define num_points 50
+// Colors for the graph traces
 #define phaseColor 0x00FF
 #define lossColor 0xFF00
 
