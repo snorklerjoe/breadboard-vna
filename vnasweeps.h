@@ -6,6 +6,7 @@
 
 #include "vna.h"
 #include <stdlib.h>
+#include "complex_math.h"
 
 // Describes the measurement setup
 typedef struct {

@@ -1,4 +1,5 @@
 #include "vnasweeps.h"
+#include "complex_math.h"
 
 // Creates a new, initialized vna_meas_t instance based on a given setup
 // Dynamic allocation is used, so vna_meas_deinit must follow if multiple are

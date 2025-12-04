@@ -6,6 +6,7 @@
 #include <pico/stdlib.h>
 #include "ad9834.h"
 #include <stdio.h>
+#include "complex_math.h"
 
 
 // Initializes all VNA hardware

@@ -10,6 +10,7 @@
 #include <pico/multicore.h>
 #include "vna.h"
 #include "vnasweeps.h"
+#include "complex_math.h"
 
 // Number of measurements to average together, discarding one outlier
 const uint meas_avgs = 3;  // For normal measurements
