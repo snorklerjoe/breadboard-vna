@@ -182,7 +182,7 @@ int main() {
     int xCoords[num_points];
     int yPhaseCoords[num_points];
     
-    int PPD = 10; //Pixels per decade
+    int PPD = 50; //Pixels per decade
     bool LOSS = true; //Display loss
     bool PHASE = true; //Display phase
 
@@ -218,15 +218,15 @@ int main() {
                 ili9341_drawString(&tft, 150, 50, "TOG", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 80, "10", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 80, "30", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 110, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 110, "20", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 110, "40", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 140, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 140, "30", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 140, "50", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 170, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 170, "40", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 170, "60", 0xFFFF, 0x0000, 2);
                 ili9341_box(&tft, 200, 50, 20, 30, 0x0000);
-                ili9341_drawString(&tft, 50, 200, "50", 0xFFFF, 0x0000, 2);
+                ili9341_drawString(&tft, 50, 200, "70", 0xFFFF, 0x0000, 2);
 
                 ili9341_box(&tft, 80, 150, 20, 50, 0x0000);
                 ili9341_drawString(&tft, 150, 80, "LOSS", 0xFFFF, 0x0000, 2);
@@ -242,47 +242,47 @@ int main() {
                 if(b <= 260 && b >= 230){ //Freq buttons
                     if(a >= 80 && a <= 100){
                         for(int i = 0; i < num_points; i++){
-                            xCoords[i] = 10*xCoords[i]/PPD;
+                            xCoords[i] = 30*xCoords[i]/PPD;
                         }
-                        PPD = 10;
+                        PPD = 30;
                         ili9341_box(&tft, 80, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 80, "10", 0xFFFF, 0x0000, 2);
+                        ili9341_drawString(&tft, 50, 80, "30", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 110 && a <= 130){
                         for(int i = 0; i < num_points; i++){
-                            xCoords[i] = 20*xCoords[i]/PPD;
+                            xCoords[i] = 40*xCoords[i]/PPD;
                         }
-                        PPD = 20;
+                        PPD = 40;
                         ili9341_box(&tft, 110, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 110, "20", 0xFFFF, 0x0000, 2);
+                        ili9341_drawString(&tft, 50, 110, "40", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 140 && a <= 160){
                         for(int i = 0; i < num_points; i++){
-                            xCoords[i] = 30*xCoords[i]/PPD;
+                            xCoords[i] = 50*xCoords[i]/PPD;
                         }
-                        PPD = 30;
+                        PPD = 50;
                         ili9341_box(&tft, 140, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 140, "30", 0xFFFF, 0x0000, 2);
+                        ili9341_drawString(&tft, 50, 140, "50", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 170 && a <= 190){
                         for(int i = 0; i < num_points; i++){
-                            xCoords[i] = 40*xCoords[i]/PPD;
+                            xCoords[i] = 60*xCoords[i]/PPD;
                         }
-                        PPD = 40;
+                        PPD = 60;
                         ili9341_box(&tft, 170, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 170, "40", 0xFFFF, 0x0000, 2);
+                        ili9341_drawString(&tft, 50, 170, "60", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                     else if(a >= 200 && a <= 220){
                         for(int i = 0; i < num_points; i++){
-                            xCoords[i] = 50*xCoords[i]/PPD;
+                            xCoords[i] = 70*xCoords[i]/PPD;
                         }
-                        PPD = 50;
+                        PPD = 70;
                         ili9341_box(&tft, 200, 50, 20, 30, 0x001F);
-                        ili9341_drawString(&tft, 50, 200, "50", 0xFFFF, 0x0000, 2);
+                        ili9341_drawString(&tft, 50, 200, "70", 0xFFFF, 0x0000, 2);
                         sleep_ms(100);
                     }
                 }
