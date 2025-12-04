@@ -341,7 +341,7 @@ int main() {
                 int j = 40;
                 for(int i = 0; j < 280; i++){//changed from 320
                     sprintf(str, "%d", i);
-                    ili9341_drawString(&tft, j, 200, str, 0xFFFF, 0x0000, 1);
+                    ili9341_drawString(&tft, j, 201, str, 0xFFFF, 0x0000, 1);
                     ili9341_line(&tft, 200, j, 0, j, 0x07E0);
                     j = j + PPD;
                 }
@@ -362,7 +362,8 @@ int main() {
                 
 
                 ili9341_drawString(&tft, 140, 220, "Frequency(Hz)", 0xFFFF, 0x0000, 1);
-                ili9341_drawString(&tft, 0, 220, "Gain(dB)", 0xFFFF, 0x0000, 1);
+                ili9341_drawString(&tft, 0, 220, "Loss(dB)", 0xFFFF, 0x0000, 1);
+                ili9341_drawString(&tft, 280, 220, "Phase", 0xFFFF, 0x0000, 1);
 
                 ili9341_box(&tft, 0, 300, 20, 20, 0xFFFF);
                 change = false;
