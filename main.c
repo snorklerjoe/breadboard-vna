@@ -341,7 +341,8 @@ int main() {
                 char str[5];
                 int j = 40;
                 for(int i = 5; j < 280; i++){//changed from 320
-                    sprintf(str, "%d", pow(10,i)/1000);
+                    int temp = pow(10,i)/1000;
+                    sprintf(str, "%d", temp);
                     ili9341_drawString(&tft, j, 201, str, 0xFFFF, 0x0000, 1);
                     ili9341_line(&tft, 200, j, 0, j, 0x07E0);
                     j = j + PPD;
