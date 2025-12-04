@@ -11,7 +11,7 @@
 // Config for taking a reading
 #define RDG_STEADYSTATE_DELAY_MS 2  // Number of ms to wait before assuming steady state and taking measurement
 #define RDG_FREQCHANGE_DELAY_MS 10  // Number of ms to wait before assuming steady state and taking measurement
-#define RDG_ADC_FREQ 10  // Desired frequency to have at the ADC (kHz)
+#define RDG_ADC_FREQ ADC_INPUT_FREQ  // Desired frequency to have at the ADC (kHz)
 
 // Actual Gamma values of cal standards
 #define Gamma_Short (double_cplx_t) {-1.0, 0.0}
