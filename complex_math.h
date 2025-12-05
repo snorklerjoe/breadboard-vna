@@ -11,6 +11,7 @@ typedef struct {
 // Complex number constants
 #define cplx_unity (double_cplx_t){1.0, 0.0}  // Just 1
 #define cplx_zero (double_cplx_t){0.0, 0.0}   // Just 0
+#define cplx_j (double_cplx_t){0.0, 1.0}      // Just j
 
 // Macros for complex number arithmetic
 #define cplx_div(x, y) (double_cplx_t) {(x.a*y.a + x.b*y.b) / (y.a*y.a + y.b*y.b), (y.a*x.b - x.a*y.b) / (y.a*y.a + y.b*y.b)}

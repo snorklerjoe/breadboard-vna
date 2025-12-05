@@ -9,10 +9,10 @@
 #include "complex_math.h"
 #include <pico/sync.h>
 
-static double ref_I[NUM_SAMPLES/2];
-static double ref_Q[NUM_SAMPLES/2];
-static double rfl_I[NUM_SAMPLES/2];
-static double rfl_Q[NUM_SAMPLES/2];
+static double ref_I[NUM_SAMPLES];
+static double ref_Q[NUM_SAMPLES];
+static double rfl_I[NUM_SAMPLES];
+static double rfl_Q[NUM_SAMPLES];
 
 // Initializes all VNA hardware
 void vna_init() {
@@ -36,7 +36,7 @@ double vna_set_freq(uint16_t freq) {
     uint16_t srcfreq_real = lofreq_real + RDG_ADC_FREQ;
     ad9834_setfreq(srcfreq_real*1000);
 
-    printf("\n\r#SetFreq to %d\n\r", srcfreq_real);
+    // printf("\n\r#SetFreq to %d\n\r", srcfreq_real);
 
     // Sleep to wait for steady-state
     sleep_ms(RDG_FREQCHANGE_DELAY_MS);
@@ -102,14 +102,15 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     // );
 
     uint len = NUM_SAMPLES_PROCESSED/2;
-    for(int i =NUM_SAMPLES/2 - len; i < NUM_SAMPLES/2; i++) {
-        printf("%f,%f,%f,%f\n\r", rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-    }
+    // for(int i =NUM_SAMPLES/2 - len; i < NUM_SAMPLES/2; i++) {
+        // printf("%f,%f,%f,%f\n\r", rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+    // }
 
     // printf("Phasor: %f, %f\n\r", calc_phasor(ref_I, ref_Q).a, calc_phasor(ref_I, ref_Q).b);
     double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
     double_cplx_t ref_phasor = calc_phasor(ref_I, ref_Q);
-    printf("#Refl=%f+j%f, Ref=%f+j%f\n\r", rfl_phasor.a, rfl_phasor.b, ref_phasor.a, ref_phasor.b);
+    double_cplx_t gamma = cplx_div(rfl_phasor, ref_phasor);
+    // printf("#Gamma=%f+%f; Refl=%f+j%f, Ref=%f+j%f\n\r", gamma.a, gamma.b, rfl_phasor.a, rfl_phasor.b, ref_phasor.a, ref_phasor.b);
 
     double_cplx_t gamma_raw = cplx_div(
         rfl_phasor,

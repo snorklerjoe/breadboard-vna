@@ -17,7 +17,7 @@ const uint meas_avgs = 1;  // For normal measurements
 const uint cal_avgs = 2;   // For initial calibration
 
 // Number of points in a measurement
-#define num_points 50
+#define num_points 20
 // Colors for the graph traces
 #define phaseColor 0x00FF
 #define lossColor 0xFF00
@@ -51,6 +51,15 @@ mutex_t data_mutex;
 // Tells when new data is available
 bool change = false;
 
+// Test function for now...
+void test() {
+    return;
+    vna_set_freq(1000);  // 1MHz
+    while(1) {
+        printf("\n\r");
+        vna_meas_point_gamma_raw(1);
+    }
+}
 
 //For formatting loss coordinate values to our graph
 void lossConversion(int *coords, size_t length){
@@ -173,6 +182,8 @@ void meas_core_task() {
 int main() {
     stdio_init_all();
     init_vna();
+
+    test();
 
     ili9341_init(&tft);
     ft6206_init();

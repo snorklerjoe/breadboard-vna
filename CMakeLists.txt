@@ -20,6 +20,8 @@ target_sources(SuperVNA PRIVATE
     ILI9341.c
     FT6206.c
     glcdfont.c
+
+    meow_fft.c
 )
 
 target_link_libraries(SuperVNA PRIVATE
