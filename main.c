@@ -53,7 +53,7 @@ bool change = false;
 
 // Test function for now...
 void test() {
-    return;
+    // return;
     vna_set_freq(1000);  // 1MHz
     while(1) {
         printf("\n\r");

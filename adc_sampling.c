@@ -147,14 +147,16 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     // for(int i = 1; i < NUM_SAMPLES; i = i + 2)
         // Q_samples[i/2] = ((double)dma_buf[i]) - q_bias;
 
-    // Save I and Q data, with a zero any time the other side was measuring
-    for(int i = 0; i < NUM_SAMPLES; i++) {
+    // Save I and Q data
+    for(int i = 0; i < NUM_SAMPLES-1; i++) {
         if (i % 2 == 0)  {  // Even => I
             I_samples[i] = (double)dma_buf[i] - i_bias;
-            Q_samples[i] = 0.0;
+            I_samples[i+1] = (double)dma_buf[i] - i_bias;
+            // Q_samples[i] = 0.0;
         } else {            // Odd  => Q
-            I_samples[i] = 0.0;
+            // I_samples[i] = 0.0;
             Q_samples[i] = (double)dma_buf[i] - q_bias;
+            Q_samples[i+1] = (double)dma_buf[i] - q_bias;
         }
     }
 
@@ -167,11 +169,24 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
 
 }
 
+double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
+    double total_I = 0.0;
+    double total_Q = 0.0;
+
+    for(int i = NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) { // For each (I,Q) pair
+        total_I += I_samples[i];
+        total_Q += Q_samples[i];
+    }
+
+    return (double_cplx_t) {total_I / NUM_SAMPLES_PROCESSED, total_Q / NUM_SAMPLES_PROCESSED};
+
+}
+
 // Measures a vector based on a pair of arrays of NUM_SAMPLES/2 samples of I and Q signals
 // This needs to account for negative phase, so the previous method of using rms of I and Q separately was not adequate.
 // This method performs digital baseband downconversion and averages the resulting baseband values to get the phasor.
 // Essentially, it multiplies I(n) + jQ(n) by e^(j*omega*T) and sums the result to be most influenced by the DC value
-double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
+double_cplx_t calc_phasor_hybrid(double *I_samples, double *Q_samples) {
     // Downconvert the I and Q signals to DC by multiplying pointwise by sin and cos
     double total_I = 0.0;
     double total_Q = 0.0;

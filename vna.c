@@ -102,22 +102,30 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     // );
 
     uint len = NUM_SAMPLES_PROCESSED/2;
-    // for(int i =NUM_SAMPLES/2 - len; i < NUM_SAMPLES/2; i++) {
-        // printf("%f,%f,%f,%f\n\r", rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-    // }
+    printf("\n\r\n\r");
+    for(int i =NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
+        // printf("Gamma: %f angle %f; \t%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), atan2(rfl_Q[i], rfl_I[i]) - atan2(ref_Q[i], ref_I[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+        printf("%f,%f,%f,%f\n\r",  rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+    }
 
     // printf("Phasor: %f, %f\n\r", calc_phasor(ref_I, ref_Q).a, calc_phasor(ref_I, ref_Q).b);
-    double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
-    double_cplx_t ref_phasor = calc_phasor(ref_I, ref_Q);
-    double_cplx_t gamma = cplx_div(rfl_phasor, ref_phasor);
+    // double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
+    // double_cplx_t ref_phasor = calc_phasor(ref_I, ref_Q);
+    // double_cplx_t gamma = cplx_div(rfl_phasor, ref_phasor);
     // printf("#Gamma=%f+%f; Refl=%f+j%f, Ref=%f+j%f\n\r", gamma.a, gamma.b, rfl_phasor.a, rfl_phasor.b, ref_phasor.a, ref_phasor.b);
 
-    double_cplx_t gamma_raw = cplx_div(
-        rfl_phasor,
-        ref_phasor
-    );
+    double_cplx_t total_gamma = cplx_zero;
 
-    return gamma_raw;
+    for(int i = NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) { // For each (I,Q) pair
+        double_cplx_t ref = {ref_I[i], ref_Q[i]};
+        double_cplx_t rfl = {rfl_I[i], rfl_Q[i]};
+        total_gamma = cplx_add(total_gamma, cplx_div(    
+            rfl,
+            ref        
+        ));
+    }
+
+    return cplx_scale(total_gamma, 1.0/NUM_SAMPLES_PROCESSED);
 }
 
 double_cplx_t vna_meas_point_gamma_raw(int num_avgs) {
