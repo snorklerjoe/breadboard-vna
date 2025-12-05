@@ -63,7 +63,7 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     adc_set_round_robin(ADC_RR_MASK);
     adc_select_input(ADC_I - 26);  // Start with I signal
     adc_fifo_setup(true, true, 1, false, false);
-    adc_set_clkdiv(0);
+    adc_set_clkdiv(0);  // Sample at full speed
 
     // Set up ADC DMA channel
     uint dma_ch = dma_claim_unused_channel(true);
@@ -111,6 +111,8 @@ void take_interleaved_iq_samples(double *I_samples, double *Q_samples) {
     // q_bias = (double)(2048);
 
     // Save & remove bias
+    // This only operates on a region at the end of the data, to avoid
+    // compensating for transients and pre-steady-state behavior
     for(int i = 0; i < NUM_SAMPLES; i = i + 2)
         I_samples[i/2] = ((double)dma_buf[i]) - i_bias;
     for(int i = 1; i < NUM_SAMPLES; i = i + 2)
@@ -127,7 +129,12 @@ double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
     double total_Q = 0.0;
 
     // Phase step in radians that each sample represents
-    double phase_step = 2.0 * MATH_PI * (double)ADC_INPUT_FREQ / (double)ADC_TOTAL_SAMPLE_RATE;
+    double phase_step = 4.0 * MATH_PI * (double)ADC_INPUT_FREQ / (double)ADC_TOTAL_SAMPLE_RATE;
+
+    // 1-sample phase offset
+    double iq_round_robin_separation = 2.0 * MATH_PI / (double)ADC_TOTAL_SAMPLE_RATE;
+
+    // State variable for the loop
     double cur_phase = 0.0;
 
     // printf("\n\r");
@@ -139,13 +146,13 @@ double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
         // printf("%f,%f\n\r", I_samples[i], Q_samples[i]);
         // a = I*cos - Q*sin
         // Q is shifted because of the round robin
-        total_I += I_samples[i] * cos(cur_phase) - Q_samples[i] * sin(cur_phase + phase_step);
+        total_I += I_samples[i] * cos(cur_phase) + Q_samples[i] * sin(cur_phase + iq_round_robin_separation);
 
         // b = I*sin + Q*cos
-        total_Q += I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase + phase_step);
+        total_Q += -1.0 * I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase + iq_round_robin_separation);
 
         // Step forwards
-        cur_phase += 2.0*phase_step;
+        cur_phase += phase_step;
     }
 
     return (double_cplx_t) {total_I, total_Q};

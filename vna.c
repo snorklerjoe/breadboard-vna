@@ -36,7 +36,7 @@ double vna_set_freq(uint16_t freq) {
     uint16_t srcfreq_real = lofreq_real + RDG_ADC_FREQ;
     ad9834_setfreq(srcfreq_real*1000);
 
-    printf("#SetFreq to %d\n\r", srcfreq_real);
+    printf("\n\r#SetFreq to %d\n\r", srcfreq_real);
 
     // Sleep to wait for steady-state
     sleep_ms(RDG_FREQCHANGE_DELAY_MS);
@@ -71,8 +71,7 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     // Measure incident power (vector)
     uint32_t int_sav = save_and_disable_interrupts();  // Timing must be as constant as possible here for reduced phase noise in measurement
     rx_set_incident();
-    gpio_put(SRC_RESET, false);
-    sleep_us(500);
+    gpio_put(SRC_RESET, false);  // Pull accumulator reset off so that we begin to have a source starting from a consistent phase
     // for(int i = 0; i < 50000; i++)
         // asm volatile("nop \n nop \n nop");
     take_interleaved_iq_samples(ref_I, ref_Q);
@@ -86,7 +85,6 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     sleep_ms(1);
     rx_set_reflected();
     gpio_put(SRC_RESET, false);
-    sleep_us(500);
     // for(int i = 0; i < 50000; i++)
         // asm volatile("nop \n nop \n nop");
     take_interleaved_iq_samples(rfl_I, rfl_Q);
@@ -103,7 +101,6 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     //     reference_rx
     // );
 
-    printf("\n\r");
     uint len = NUM_SAMPLES_PROCESSED/2;
     for(int i =NUM_SAMPLES/2 - len; i < NUM_SAMPLES/2; i++) {
         printf("%f,%f,%f,%f\n\r", rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
