@@ -21,7 +21,7 @@ const uint meas_avgs = 1;  // For normal measurements
 const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
-#define num_points 20
+#define num_points 50
 // Colors for the graph traces
 #define phaseColor 0x00FF
 #define lossColor 0xFF00
@@ -179,7 +179,7 @@ void take_measurement() {
         double freq = measurement_data.frequencies[i]/1000;
         if (freq == prevfreq) continue;
 
-        double_cplx_t gamma = cplx_scale(measurement_data.gammas_cald[i], -1.0);
+        double_cplx_t gamma = cplx_scale(measurement_data.gammas_cald[i], 1.0);
         double_cplx_t impedance = cplx_scale(cplx_div(
             cplx_add(cplx_unity, gamma),
             cplx_sub(cplx_unity, gamma)
