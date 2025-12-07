@@ -22,7 +22,6 @@ typedef struct {
 
 #define cplx_mag(num) (double) sqrt(num.a*num.a + num.b*num.b)
 #define cplx_ang(num) (double) atan2(num.b, num.a)
-#define cplx_ang_deg(num) (double) 180.0/MATH_PI*atan2(num.b, num.a)
-
+#define cplx_ang_deg(num) (double) 180.0*atan2(num.b, num.a)/MATH_PI
 
 #endif
