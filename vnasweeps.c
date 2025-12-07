@@ -55,6 +55,10 @@ void vna_sweep_freq(vna_meas_t meas, double_cplx_t* gammas, uint8_t numavgs) {  
         // double freq = pow(10, log10(meas_setup.start_freq) + i * log_step_size);
         double freq = meas_setup.start_freq + stepsize*i;
         meas.frequencies[i] = vna_set_freq(freq);
+        if(i>0 && meas.frequencies[i-1] == freq) {
+            gammas[i] = gammas[i-1];
+            continue;  // Don't remeasure for duplicate points
+        }
         gammas[i] = vna_meas_point_gamma_raw(numavgs);
     }
 }
