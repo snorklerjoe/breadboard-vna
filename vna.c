@@ -75,10 +75,6 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     sleep_us(50000);
     take_interleaved_iq_samples(ref_I, ref_Q);
 
-    // double reference_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
-    // double reference_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
-    // double_cplx_t reference_rx = {reference_I, reference_Q};
-
     // Measure reflected power (vector)
     gpio_put(SRC_RESET, false);
     rx_set_reflected();
@@ -86,29 +82,6 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     take_interleaved_iq_samples(rfl_I, rfl_Q);
     restore_interrupts(int_sav);
     gpio_put(SRC_RESET, true);  // Put source back in reset state
-
-    // double refl_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
-    // double refl_Q = rx_adc_get_amplitude_blocking(ADC_Q, RDG_ADC_FREQ);
-    // double_cplx_t reflected_rx = {refl_I, refl_Q};
-
-    // Calculate Gamma
-    // double_cplx_t gamma_raw = cplx_div(
-    //     reflected_rx,
-    //     reference_rx
-    // );
-
-    // uint len = NUM_SAMPLES_PROCESSED/2;
-    // printf("\n\r\n\r");
-    // for(int i =NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
-        //  printf("Gamma: %f angle %f; \t%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), atan2(rfl_Q[i], rfl_I[i]) - atan2(ref_Q[i], ref_I[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-        // printf("%f,%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-    // }
-
-    // printf("Phasor: %f, %f\n\r", calc_phasor(ref_I, ref_Q).a, calc_phasor(ref_I, ref_Q).b);
-    // double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
-    // double_cplx_t ref_phasor = calc_phasor(ref_I, ref_Q);
-    // double_cplx_t gamma = cplx_div(rfl_phasor, ref_phasor);
-    // printf("#Gamma=%f+%f; Refl=%f+j%f, Ref=%f+j%f\n\r", gamma.a, gamma.b, rfl_phasor.a, rfl_phasor.b, ref_phasor.a, ref_phasor.b);
 
     double_cplx_t total_gamma = cplx_zero;
 
@@ -203,14 +176,6 @@ error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_
     double_cplx_t e00 = cplx_div(num_e00, denom);
     
     // Find e11
-    // double_cplx_t e11 = cplx_div(cplx_sub(cplx_add(cplx_scale(m_short, 2), m_open), cplx_scale(e00, 2)), m_open);
-    // double_cplx_t e11 = cplx_scale(cplx_sub(m_open, m_short), 0.5);
-    // double_cplx_t e11 = cplx_div(
-    //     cplx_sub(cplx_scale(cplx_sub(m_short, m_load), 1),
-    //     cplx_scale(cplx_sub(m_open, m_load), -1)),
-    //     cplx_scale(cplx_sub(m_short, m_open), -1)
-    // );
-
     double_cplx_t num_e11 = cplx_scale(
         cplx_add(
             cplx_add(
@@ -233,10 +198,6 @@ error_terms_t vna_cal_point(double_cplx_t m_short, double_cplx_t m_open, double_
     double_cplx_t e11 = cplx_div(num_e11, denom);
 
     // Find Delta e
-    // double_cplx_t De = cplx_sub(cplx_sub(e00, e11), m_short);
-    // double_cplx_t De = cplx_sub(cplx_add(m_short, cplx_mult(m_short, e11)), e00);
-    // double_cplx_t De = cplx_div(cplx_sub(cplx_mult(m_open, cplx_sub(m_short, m_load)), cplx_scale(cplx_mult(cplx_sub(m_open, m_load), m_short), -1)), cplx_scale(cplx_sub(m_short, m_open), -1));
-
     double_cplx_t num_de = cplx_scale(
         cplx_add(
             cplx_add(
