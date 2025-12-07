@@ -18,7 +18,7 @@
 
 // Number of measurements to average together, discarding one outlier
 const uint meas_avgs = 1;  // For normal measurements
-const uint cal_avgs = 3;   // For initial calibration
+const uint cal_avgs = 2;   // For initial calibration
 
 // Number of points in a measurement
 #define num_points 50

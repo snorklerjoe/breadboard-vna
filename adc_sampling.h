@@ -9,13 +9,13 @@
 
 // Sampling and filtering parameters
 #define ADC_INPUT_FREQ 20  // kHz
-#define NUM_SAMPLES 600
+#define NUM_SAMPLES 400
 
 // Hardware parameter
 #define ADC_TOTAL_SAMPLE_RATE 500
 
 // All other samples are discarded
-#define NUM_SAMPLES_PROCESSED ((double) ADC_TOTAL_SAMPLE_RATE / (double) ADC_INPUT_FREQ) * 4.0
+#define NUM_SAMPLES_PROCESSED ((double) ADC_TOTAL_SAMPLE_RATE / (double) ADC_INPUT_FREQ) * 2.0
 
 #define FIR_N 64
 #define FIR_WIDTH 0.1  // kHz
