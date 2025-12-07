@@ -172,7 +172,7 @@ void take_measurement() {
         );
     }
     mutex_exit(&data_mutex);
-
+    
     // Print out Impedance vs. Freq
     double prevfreq = 0.0;
     for(uint i = 0; i < num_points; i++) {
@@ -360,7 +360,7 @@ int main() {
                     //x is y
                     yLossCoords[i] = graph_return_loss_dB[i];
                     yPhaseCoords[i] = graph_phase_deg[i];
-                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000)-5*PPD;  // graph_frequencies is in kHz, want Hz
+                    xCoords[i] = PPD*log10(graph_frequencies[i]*1000)-5*PPD;
                 }
 
                 // Release lock
