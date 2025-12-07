@@ -12,6 +12,10 @@
 #include "vnasweeps.h"
 #include "complex_math.h"
 
+
+#define TEST_MODE   // When defined, continuously measures at 1MHz without ui
+
+
 // Number of measurements to average together, discarding one outlier
 const uint meas_avgs = 1;  // For normal measurements
 const uint cal_avgs = 2;   // For initial calibration
@@ -53,7 +57,6 @@ bool change = false;
 
 // Test function for now...
 void test() {
-    // return;
     vna_set_freq(1000);  // 1MHz
     while(1) {
         printf("\n\r");
@@ -183,7 +186,10 @@ int main() {
     stdio_init_all();
     init_vna();
 
+    // Run test mode if compiled with set
+    #ifdef TEST_MODE
     test();
+    #endif
 
     ili9341_init(&tft);
     ft6206_init();
