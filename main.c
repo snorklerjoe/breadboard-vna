@@ -13,12 +13,12 @@
 #include "complex_math.h"
 
 
-#define TEST_MODE   // When defined, continuously measures at 1MHz without ui
+// #define TEST_MODE   // When defined, continuously measures at 1MHz without ui
 
 
 // Number of measurements to average together, discarding one outlier
 const uint meas_avgs = 1;  // For normal measurements
-const uint cal_avgs = 2;   // For initial calibration
+const uint cal_avgs = 3;   // For initial calibration
 
 // Number of points in a measurement
 #define num_points 20
@@ -88,9 +88,9 @@ void init_vna() {
     // Define masurement setup
     measurement_setup = (vna_meas_setup_t){
         // Start (kHz)
-        (double) 100,
+        (double) 250,
         // End (kHz)
-        (double) 8500,
+        (double) 12500,
         // Num Points
         (uint) num_points
     };

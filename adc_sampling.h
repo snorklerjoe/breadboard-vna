@@ -9,7 +9,7 @@
 
 // Sampling and filtering parameters
 #define ADC_INPUT_FREQ 20  // kHz
-#define NUM_SAMPLES 400
+#define NUM_SAMPLES 600
 
 // Hardware parameter
 #define ADC_TOTAL_SAMPLE_RATE 500

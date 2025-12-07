@@ -70,10 +70,9 @@ double vna_refl_levelcheck(double freq) {
 static double_cplx_t vna_meas_point_gamma_raw_once() {
     // Measure incident power (vector)
     uint32_t int_sav = save_and_disable_interrupts();  // Timing must be as constant as possible here for reduced phase noise in measurement
-    rx_set_incident();
     gpio_put(SRC_RESET, false);  // Pull accumulator reset off so that we begin to have a source starting from a consistent phase
-    // for(int i = 0; i < 50000; i++)
-        // asm volatile("nop \n nop \n nop");
+    rx_set_incident();
+    sleep_us(50000);
     take_interleaved_iq_samples(ref_I, ref_Q);
 
     // double reference_I = rx_adc_get_amplitude_blocking(ADC_I, RDG_ADC_FREQ);
@@ -81,12 +80,9 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     // double_cplx_t reference_rx = {reference_I, reference_Q};
 
     // Measure reflected power (vector)
-    gpio_put(SRC_RESET, true);
-    sleep_ms(1);
-    rx_set_reflected();
     gpio_put(SRC_RESET, false);
-    // for(int i = 0; i < 50000; i++)
-        // asm volatile("nop \n nop \n nop");
+    rx_set_reflected();
+    sleep_us(50000);
     take_interleaved_iq_samples(rfl_I, rfl_Q);
     restore_interrupts(int_sav);
     gpio_put(SRC_RESET, true);  // Put source back in reset state
@@ -101,12 +97,12 @@ static double_cplx_t vna_meas_point_gamma_raw_once() {
     //     reference_rx
     // );
 
-    uint len = NUM_SAMPLES_PROCESSED/2;
-    printf("\n\r\n\r");
-    for(int i =NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
-        // printf("Gamma: %f angle %f; \t%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), atan2(rfl_Q[i], rfl_I[i]) - atan2(ref_Q[i], ref_I[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-        printf("%f,%f,%f,%f\n\r",  rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
-    }
+    // uint len = NUM_SAMPLES_PROCESSED/2;
+    // printf("\n\r\n\r");
+    // for(int i =NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
+        //  printf("Gamma: %f angle %f; \t%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), atan2(rfl_Q[i], rfl_I[i]) - atan2(ref_Q[i], ref_I[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+        // printf("%f,%f,%f,%f,%f\n\r", sqrt(rfl_I[i]*rfl_I[i] + rfl_Q[i]*rfl_Q[i])/sqrt(ref_I[i]*ref_I[i] + ref_Q[i]*ref_Q[i]), rfl_I[i], rfl_Q[i], ref_I[i], ref_Q[i]);
+    // }
 
     // printf("Phasor: %f, %f\n\r", calc_phasor(ref_I, ref_Q).a, calc_phasor(ref_I, ref_Q).b);
     // double_cplx_t rfl_phasor = calc_phasor(rfl_I, rfl_Q);
