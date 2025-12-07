@@ -191,8 +191,8 @@ void ili9341_drawOnCartGraph(ili9341_t *tft, int *xCoords, int *yCoords, size_t 
             yStart = 40 + yCoords[i];
             xEnd = 200 - (xCoords[i+1]);
             yEnd = 40 + yCoords[i+1];
-            if(xStart - xEnd < 170 && xStart - xEnd > -170) //Not sure about bounds on this
-                ili9341_line(tft, xStart, yStart, xEnd, yEnd, color);
+            //if(xStart - xEnd < 170 && xStart - xEnd > -170) //Not sure we want this
+            ili9341_line(tft, xStart, yStart, xEnd, yEnd, color);
         }
     }
 }
