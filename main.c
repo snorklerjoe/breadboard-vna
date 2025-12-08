@@ -174,21 +174,21 @@ void take_measurement() {
     mutex_exit(&data_mutex);
     
     // Print out Impedance vs. Freq
-    double prevfreq = 0.0;
-    for(uint i = 0; i < num_points; i++) {
-        double freq = measurement_data.frequencies[i]/1000;
-        if (freq == prevfreq) continue;
+    // double prevfreq = 0.0;
+    // for(uint i = 0; i < num_points; i++) {
+    //     double freq = measurement_data.frequencies[i]/1000;
+    //     if (freq == prevfreq) continue;
 
-        double_cplx_t gamma = cplx_scale(measurement_data.gammas_cald[i], 1.0);
-        double_cplx_t impedance = cplx_scale(cplx_div(
-            cplx_add(cplx_unity, gamma),
-            cplx_sub(cplx_unity, gamma)
-        ), 50.0);
-        printf("Freq: %fMHz  \tZ=(%f + j%f)    \n\r", freq, impedance.a, impedance.b);
-        printf("             \tGamma = %f \t< %f    \n\r", cplx_mag(gamma), cplx_ang_deg(gamma));
-        prevfreq = freq;
-    }
-    printf("\n\r");
+    //     double_cplx_t gamma = cplx_scale(measurement_data.gammas_cald[i], 1.0);
+    //     double_cplx_t impedance = cplx_scale(cplx_div(
+    //         cplx_add(cplx_unity, gamma),
+    //         cplx_sub(cplx_unity, gamma)
+    //     ), 50.0);
+    //     printf("Freq: %fMHz  \tZ=(%f + j%f)    \n\r", freq, impedance.a, impedance.b);
+    //     printf("             \tGamma = %f \t< %f    \n\r", cplx_mag(gamma), cplx_ang_deg(gamma));
+    //     prevfreq = freq;
+    // }
+    // printf("\n\r");
 }
 
 // Measurement task to run on core 2
