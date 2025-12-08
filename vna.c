@@ -70,17 +70,21 @@ double vna_refl_levelcheck(double freq) {
 static double_cplx_t vna_meas_point_gamma_raw_once() {
     // Measure incident power (vector)
     uint32_t int_sav = save_and_disable_interrupts();  // Timing must be as constant as possible here for reduced phase noise in measurement
-    gpio_put(SRC_RESET, true);
+    gpio_put(SRC_RESET, true);  // RESET PHASE
     sleep_us(2);
     gpio_put(SRC_RESET, false);  // Pull accumulator reset off so that we begin to have a source starting from a consistent phase
+    rx_reset_phase();
+
     rx_set_incident();
     sleep_us(50000);
     take_interleaved_iq_samples(ref_I, ref_Q);
 
     // Measure reflected power (vector)
-    gpio_put(SRC_RESET, true);
-    sleep_us(2);
-    gpio_put(SRC_RESET, false);
+    // gpio_put(SRC_RESET, true);  // RESET PHASE
+    // sleep_us(2);
+    // gpio_put(SRC_RESET, false);
+    // rx_reset_phase();
+
     rx_set_reflected();
     sleep_us(50000);
     take_interleaved_iq_samples(rfl_I, rfl_Q);

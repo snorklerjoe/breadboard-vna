@@ -7,6 +7,7 @@
 #include <hardware/pio.h>
 #include <math.h>
 #include "adc_sampling.h"
+#include "pio.h"
 
 #define RX_INCT_EN 15  // Enable receiving the incident signal
 #define RX_REFL_EN 14  // Enable receiving the reflected signal
@@ -34,6 +35,9 @@ void rx_set_incident();
 // Configure the receiver to receive the reflected signal
 void rx_set_reflected();
 
-// 
+// Resets the phase of the LO to a consistent value
+inline void rx_reset_phase(){
+    pio_reset_losq(TAYLOE_PIO, 0);
+}
 
 #endif

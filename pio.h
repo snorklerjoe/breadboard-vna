@@ -16,4 +16,12 @@ void pio_set_sq_freq(PIO pio, uint sm_id, float freq);
 void pio_init_losq(PIO pio, uint sm_id, uint s0, uint s1);
 float pio_set_losq_freq(PIO pio, uint sm_id, float freq);
 
+// Resets phase of LO square wave
+inline void pio_reset_losq(PIO pio, uint sm_id) {
+    pio_sm_set_enabled(pio, sm_id, false);
+    pio_sm_clkdiv_restart(pio, sm_id);
+    pio_sm_set_enabled(pio, sm_id, true);
+}
+
+
 #endif
