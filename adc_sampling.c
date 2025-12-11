@@ -6,7 +6,6 @@
 #include <hardware/clocks.h>
 #include <pico/stdlib.h>
 #include "complex_math.h"
-#include "meow_fft.h"
 
 static int fir_n[FIR_N];
 static double fir_h[FIR_N];
@@ -46,22 +45,6 @@ static void convolve() {
         int maxk = imin(FIR_N, n);
         for(int k = 0; k < maxk; k++) {
             y_buf[n] = y_buf[n] + ((double)dma_buf[n - k]) * fir_h[k];
-        }
-    }
-}
-
-static void convolve_bufs(double *in_buf, double *out_buf) {
-    // Init out buffer
-    int outlen = NUM_SAMPLES + FIR_N - 1;
-    for(int i = 0; i < outlen; i++) {
-        y_buf[i] = 0.0;
-    }
-
-    // Generate each filtered sample
-    for(int n = 0; n < outlen; n++) {
-        int maxk = imin(FIR_N, n);
-        for(int k = 0; k < maxk; k++) {
-            out_buf[n] = out_buf[n] + ((double)in_buf[n - k]) * fir_h[k];
         }
     }
 }
@@ -180,101 +163,6 @@ double_cplx_t calc_phasor(double *I_samples, double *Q_samples) {
 
     return (double_cplx_t) {total_I / NUM_SAMPLES_PROCESSED, total_Q / NUM_SAMPLES_PROCESSED};
 
-}
-
-// Measures a vector based on a pair of arrays of NUM_SAMPLES/2 samples of I and Q signals
-// This needs to account for negative phase, so the previous method of using rms of I and Q separately was not adequate.
-// This method performs digital baseband downconversion and averages the resulting baseband values to get the phasor.
-// Essentially, it multiplies I(n) + jQ(n) by e^(j*omega*T) and sums the result to be most influenced by the DC value
-double_cplx_t calc_phasor_hybrid(double *I_samples, double *Q_samples) {
-    // Downconvert the I and Q signals to DC by multiplying pointwise by sin and cos
-    double total_I = 0.0;
-    double total_Q = 0.0;
-
-    // Phase step in radians that each sample represents
-    double phase_step = 2.0 * MATH_PI * (double)ADC_INPUT_FREQ / (double)ADC_TOTAL_SAMPLE_RATE;
-
-    // 1-sample phase offset
-    // double iq_round_robin_separation = 2.0 * MATH_PI / (double)ADC_TOTAL_SAMPLE_RATE;
-
-    // State variable for the loop
-    double cur_phase = 0.0;
-
-    // printf("\n\r");
-    // for(int i = 1; i < NUM_SAMPLES; i=i+2) {
-    //     printf("%i,%i\n\r", dma_buf[i-1], dma_buf[i]);
-    // }
-
-    for(int i = NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) { // For each (I,Q) pair
-        // printf("%f,%f\n\r", I_samples[i], Q_samples[i]);
-        // a = I*cos - Q*sin
-        // Q is shifted because of the round robin
-        // total_I += I_samples[i] * cos(cur_phase) - Q_samples[i] * sin(cur_phase);
-        total_I += I_samples[i] * cos(cur_phase) + Q_samples[i] * sin(cur_phase);
-
-        // b = I*sin + Q*cos
-        total_Q += -1.0 * I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase);
-        // total_Q += I_samples[i] * sin(cur_phase) + Q_samples[i] * cos(cur_phase);
-
-        // Step forwards
-        cur_phase += phase_step;
-    }
-
-    // Now, get rms
-    double sumsq_I = 0.0;
-    for(int i = NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
-        sumsq_I += I_samples[i] * I_samples[i];
-    }
-    double sumsq_Q = 0.0;
-    for(int i = NUM_SAMPLES - NUM_SAMPLES_PROCESSED; i < NUM_SAMPLES; i++) {
-        sumsq_Q += Q_samples[i] * Q_samples[i];
-    }
-    double rms_I = sqrt(sumsq_I / (NUM_SAMPLES_PROCESSED));
-    double rms_Q = sqrt(sumsq_Q / (NUM_SAMPLES_PROCESSED));
-
-    double sign_mult_acc_I = (total_I < 0) ? -1.0 : 1.0;
-    double sign_mult_acc_Q = (total_Q < 0) ? -1.0 : 1.0;
-
-    double_cplx_t result = (double_cplx_t) {rms_I, rms_Q};
-
-    // return cplx_scale(sum_acc_result, cplx_mag(rms_result) / cplx_mag(sum_acc_result));
-    return result;
-}
-
-// Measures a vector based on a pair of arrays of NUM_SAMPLES/2 samples of I and Q signals
-// This relies on the meow_fft.h library
-double_cplx_t calc_phasor_fft(double *I_samples, double *Q_samples) {
-    // Initialize FFT params
-    const int N = 256;
-    const int N_2 = ((N+1)/2);
-    const int bin_of_interest = N * ADC_INPUT_FREQ / (ADC_TOTAL_SAMPLE_RATE);
-
-    Meow_FFT_Complex *fft_in = malloc(sizeof(Meow_FFT_Complex) * N);
-    Meow_FFT_Complex *fft_out = malloc(sizeof(Meow_FFT_Complex) * N);
-    struct Meow_FFT_Workset *fft_workset = malloc(meow_fft_generate_workset(N, NULL));
-
-    // Run FFT on I + jQ
-    int j = NUM_SAMPLES - N;
-    for(int i = 0; i < N; i++) {
-        fft_in[i] = (Meow_FFT_Complex){
-            (float) I_samples[j],
-            (float) Q_samples[j]
-        };
-        j++;
-    }
-    meow_fft_generate_workset(N, fft_workset);
-    meow_fft(fft_workset, fft_in, fft_out);
-    Meow_FFT_Complex output_singlebin = fft_out[bin_of_interest];
-
-    // Free FFT output memory
-    free(fft_out);
-    free(fft_workset);
-    free(fft_in);
-
-    // double_cplx_t I = (double_cplx_t){singlebin_I.r, singlebin_I.j};
-    // double_cplx_t Q = (double_cplx_t){singlebin_Q.r, singlebin_Q.j};
-    // return cplx_add(I, cplx_mult(cplx_j, Q));  // return I + jQ
-    return (double_cplx_t){output_singlebin.r, output_singlebin.j};
 }
 
 double rx_adc_get_amplitude_blocking(int adc_pin, double freq) {
