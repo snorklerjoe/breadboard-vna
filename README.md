@@ -5,6 +5,16 @@ Our design utilizes a Tayloe detector to downconvert the received reflected sign
 
 A schematic is available [here](./hardware/SuperVNA/schematic_sheets.pdf).
 
+## Usage
+
+Calibration occurs each time the device is power-cycled.  
+Tap anywhere on the touchscreen once the requested standard is connected.  
+
+Afterwards, a white square appears in the upper-right-hand corner of the screen. This button switches between the graph and menu views.  
+In the graph view, the graph continuously updates as the device does each sweep.
+In the menu view, the insertion loss and phase traces can be turned on and off, and the number of pixels-per-decade ("PPD") can be adjusted to change the graph scaling.
+
+
 A picture of the device on the breadboard:
 
 ![Image of the device on a breadboard](./assets/breadboard.jpg)
